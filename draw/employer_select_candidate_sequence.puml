@@ -1,0 +1,33 @@
+
+@startuml User_Select_Candidate_Sequence_Extended
+
+actor User
+participant Frontend
+participant Backend
+database Database
+
+== Hiển thị danh sách bài đăng ==
+User -> Frontend: Mở danh sách tin tuyển dụng
+Frontend -> Backend: GET /api/jobs/by-employer
+Backend -> Database: Truy vấn danh sách công việc theo công ty
+Database --> Backend: Trả danh sách công việc
+Backend --> Frontend: Danh sách công việc
+Frontend --> User: Hiển thị danh sách công việc
+
+== Hiển thị danh sách ứng viên theo bài đăng ==
+User -> Frontend: Chọn bài đăng cần xem ứng viên
+Frontend -> Backend: GET /api/job-applications?jobId=XYZ
+Backend -> Database: Truy vấn danh sách ứng viên của tin tuyển dụng
+Database --> Backend: Trả danh sách ứng viên kèm điểm xếp hạng
+Backend --> Frontend: Danh sách ứng viên + điểm
+Frontend --> User: Hiển thị danh sách ứng viên và điểm đánh giá
+
+== Chọn ứng viên ==
+User -> Frontend: Chọn ứng viên phù hợp
+Frontend -> Backend: POST /api/job-applications/select
+Backend -> Database: Cập nhật trạng thái ứng viên
+Database --> Backend: Kết quả cập nhật
+Backend --> Frontend: Xác nhận đã chọn ứng viên
+Frontend --> User: Thông báo xác nhận thành công
+
+@enduml

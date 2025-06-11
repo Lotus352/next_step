@@ -1,0 +1,32 @@
+
+@startuml JWT_Authentication_Sequence
+
+actor User
+participant "Frontend (React + Redux)" as Frontend
+participant "Backend API (Spring Boot)" as Backend
+database "Database"
+
+User -> Frontend: Mở trang đăng nhập
+User -> Frontend: Nhập thông tin tài khoản
+Frontend -> Backend: POST /api/auth/login
+Backend -> Database: Kiểm tra thông tin đăng nhập
+Database --> Backend: Kết quả kiểm tra
+
+alt Thông tin hợp lệ
+    Backend -> Backend: Tạo JWT Tokens (Access, Refresh)
+    Backend -> Database: Lưu Refresh Token
+    Backend --> Frontend: Trả về Tokens
+    Frontend -> Frontend: Lưu Tokens và cập nhật trạng thái
+    Frontend --> User: Chuyển hướng tới trang chính
+
+    Frontend -> Backend: Yêu cầu bảo vệ (với Access Token)
+    
+    Frontend -> Backend: POST /api/auth/refresh
+    Backend -> Database: Xác minh Refresh Token
+    Database --> Backend: Kết quả xác minh
+else Thông tin không hợp lệ
+    Backend --> Frontend: Phản hồi lỗi
+    Frontend --> User: Hiển thị thông báo lỗi
+end
+
+@enduml

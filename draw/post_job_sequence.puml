@@ -1,0 +1,18 @@
+
+@startuml Post_Job_Sequence
+
+actor User
+participant Frontend
+participant Backend
+database Database
+
+User -> Frontend: Chọn đăng tin tuyển dụng
+Frontend --> User: Hiển thị form nhập thông tin tuyển dụng
+User -> Frontend: Nhập thông tin tuyển dụng và gửi
+Frontend -> Backend: POST /api/jobs
+Backend -> Database: Lưu thông tin tuyển dụng
+Database --> Backend: Xác nhận lưu thành công
+Backend --> Frontend: Kết quả đăng tin
+Frontend --> User: Thông báo đăng tin thành công
+
+@enduml

@@ -1,0 +1,33 @@
+
+@startuml Extended_Apply_Job_Sequence
+
+actor User
+participant Frontend
+participant Backend
+database Database
+
+User -> Frontend: Chọn công việc ứng tuyển
+Frontend --> User: Hiển thị form ứng tuyển
+
+User -> Frontend: Gửi hồ sơ ứng tuyển (CV, thông tin)
+Frontend -> Backend: Kiểm tra trạng thái ứng tuyển
+
+alt Chưa ứng tuyển
+    Frontend -> Backend: POST /api/job-applications
+    Backend -> Database: Lưu thông tin ứng tuyển
+    Database --> Backend: Trả kết quả lưu
+    Backend --> Frontend: Xác nhận đã ứng tuyển
+    Frontend --> User: Hiển thị thông báo xác nhận
+else Đã ứng tuyển trong 24h
+    Frontend --> User: Thông báo có thể chỉnh sửa hồ sơ
+    User -> Frontend: Gửi thông tin chỉnh sửa
+    Frontend -> Backend: PUT /api/job-applications
+    Backend -> Database: Cập nhật thông tin ứng tuyển
+    Database --> Backend: Trả kết quả cập nhật
+    Backend --> Frontend: Xác nhận chỉnh sửa thành công
+    Frontend --> User: Hiển thị thông báo thành công
+else Đã quá 24h
+    Frontend --> User: Thông báo không thể ứng tuyển hoặc chỉnh sửa nữa
+end
+
+@enduml

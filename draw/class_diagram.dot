@@ -1,0 +1,47 @@
+digraph G { 
+    rankdir=LR;
+    node [shape=record, style=filled, fillcolor=lightyellow];
+
+    subgraph cluster_user {
+        label = "User Domain";
+        style=filled;
+        Users [label="{Users|+ id\l+ username\l+ email\l+ password_hash\l+ full_name\l+ avatar_url\l+ resume_url\l+ status\l+ company_id\l+ is_deleted\l+ created_at\l+ updated_at\l+ experience_id\l+ phone_number\l+ nationality\l}"];
+        Roles [label="{Roles|+ id\l+ role_name\l+ description\l}"];
+        Permissions [label="{Permissions|+ id\l+ permission_name\l+ description\l}"];
+        ExperienceLevels [label="{ExperienceLevels|+ experience_id\l+ experience_name\l}"];
+        Skills [label="{Skills|+ skill_id\l+ skill_name\l}"];
+    }
+
+    subgraph cluster_company {
+        label = "Company Domain";
+        style=filled;
+        Companies [label="{Companies|+ company_id\l+ name\l+ description\l+ count_employees\l+ zip_code\l+ company_url\l+ logo_url\l+ is_deleted\l+ created_at\l+ updated_at\l+ founded\l+ state\l+ is_featured\l+ location_id\l}"];
+        Locations [label="{Locations|+ location_id\l+ country_name\l+ state\l+ city\l+ street\l+ house_number\l}"];
+    }
+
+    subgraph cluster_job {
+        label = "Job Domain";
+        style=filled;
+        Jobs [label="{Jobs|+ job_id\l+ user_id\l+ company_id\l+ salary_id\l+ title\l+ short_description\l+ detailed_description\l+ employment_type\l+ job_url\l+ remote_allowed\l+ expiry_date\l+ status\l+ is_deleted\l+ created_at\l+ updated_at\l+ is_featured\l+ interview_process\l+ location_id\l+ benefits\l}"];
+        JobApplications [label="{JobApplications|+ application_id\l+ job_id\l+ user_id\l+ resume_url\l+ cover_letter\l+ status\l+ applied_at\l+ resume_content\l+ score\l+ score_mean\l}"];
+        Certifications [label="{Certifications|+ certification_id\l+ certification_name\l}"];
+        Notifications [label="{Notifications|+ notification_id\l+ user_id\l+ job_id\l+ message\l+ status\l+ created_at\l+ read_at\l}"];
+    }
+
+    # Entity Relationships (full, đúng bản chất nhiều-nhiều và một-nhiều)
+    Users -> Companies [label="works for (N-1)", arrowhead="vee"];
+    Jobs -> Companies [label="posted by (N-1)", arrowhead="vee"];
+    Jobs -> Locations [label="located in (N-1)", arrowhead="vee"];
+    JobApplications -> Users [label="submitted by (N-1)", arrowhead="vee"];
+    JobApplications -> Jobs [label="applied to (N-1)", arrowhead="vee"];
+    Notifications -> Users [label="notifies (N-1)", arrowhead="vee"];
+    Notifications -> Jobs [label="related to (N-1)", arrowhead="vee"];
+
+    Users -> Roles [label="has (N-N)", arrowhead="vee"];
+    Roles -> Permissions [label="grants (N-N)", arrowhead="vee"];
+    Users -> Skills [label="has (N-N)", arrowhead="vee"];
+    Jobs -> Skills [label="requires (N-N)", arrowhead="vee"];
+    Users -> ExperienceLevels [label="has level (N-N)", arrowhead="vee"];
+    Jobs -> ExperienceLevels [label="requires level (N-N)", arrowhead="vee"];
+    Jobs -> Certifications [label="requires (N-N)", arrowhead="vee"];
+}

@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.9">
+  <diagram name="Trang-1" id="6aG4D_sqJUiMqtVVQCYz">
+    <mxGraphModel dx="1737" dy="878" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0-0aslskso92xMR-tfAz-1" value="Nhà tuyển dụng" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="800" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-4" value="Đăng nhập" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="70" y="317.5" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-12" value="Cập nhật hồ sơ công ty" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="260" y="555" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-17" value="&lt;&lt;include&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-12" target="0-0aslskso92xMR-tfAz-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-13" value="Xem thống kê" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="320" y="455" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-18" value="&lt;&lt;include&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-13" target="0-0aslskso92xMR-tfAz-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-8" value="Xem DS ứng viên" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="390" y="225" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-6" value="Chỉnh sửa tin" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="590" y="320" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-5" value="Đăng tin tuyển dụng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="320" y="355" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-16" value="&lt;&lt;include&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-5" target="0-0aslskso92xMR-tfAz-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-19" value="&lt;&lt;extend&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-6" target="0-0aslskso92xMR-tfAz-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-21" value="&lt;&lt;include&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-8" target="0-0aslskso92xMR-tfAz-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-3" value="Đăng ký tài khoản" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="80" y="122.5" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-7" value="Đóng tin" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="590" y="435" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-20" value="&lt;&lt;extend&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-7" target="0-0aslskso92xMR-tfAz-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-10" value="Cập nhật trạng thái" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="430" y="80" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-23" value="&lt;&lt;extend&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-10" target="0-0aslskso92xMR-tfAz-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-9" value="Đánh giá hồ sơ" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="0-0aslskso92xMR-tfAz-1">
+          <mxGeometry x="600" y="155" width="170" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-22" value="&lt;&lt;extend&gt;&gt;" style="endArrow=none;dashed=1;" edge="1" parent="0-0aslskso92xMR-tfAz-1" source="0-0aslskso92xMR-tfAz-9" target="0-0aslskso92xMR-tfAz-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-2" value="" style="shape=umlActor;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="230" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-14" value="" style="endArrow=none;" edge="1" parent="1" source="0-0aslskso92xMR-tfAz-2" target="0-0aslskso92xMR-tfAz-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-15" value="" style="endArrow=none;" edge="1" parent="1" source="0-0aslskso92xMR-tfAz-2" target="0-0aslskso92xMR-tfAz-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0-0aslskso92xMR-tfAz-26" value="Nhà tuyển dụng" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="320" width="100" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

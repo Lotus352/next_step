@@ -1,0 +1,18 @@
+
+@startuml Register_Sequence
+
+actor User
+participant Frontend
+participant Backend
+database Database
+
+User -> Frontend: Mở trang đăng ký
+Frontend --> User: Hiển thị form đăng ký
+User -> Frontend: Nhập thông tin đăng ký
+Frontend -> Backend: POST /api/auth/register
+Backend -> Database: Kiểm tra và lưu thông tin
+Database --> Backend: Trả kết quả
+Backend --> Frontend: Kết quả đăng ký
+Frontend --> User: Thông báo kết quả
+
+@enduml
