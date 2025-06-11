@@ -33,9 +33,19 @@ CREATE TABLE `company_reviews` (
   KEY `company_id` (`company_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `company_reviews_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `companies` (`company_id`) ON DELETE CASCADE,
-  CONSTRAINT `company_reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `company_reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `company_reviews`
+--
+
+LOCK TABLES `company_reviews` WRITE;
+/*!40000 ALTER TABLE `company_reviews` DISABLE KEYS */;
+INSERT INTO `company_reviews` VALUES (1,1,6,3,'nice company','2025-02-28 21:41:32'),(3,1,8,4,'Challenging projects with global impact','2025-02-28 21:41:32'),(4,1,9,3,'Fast-paced but needs better work-life balance','2025-02-28 21:41:32'),(5,2,6,4,'Revolutionizing the automotive industry','2025-02-28 21:41:32'),(6,2,7,4,'Exciting cutting-edge technology work','2025-02-28 21:41:32'),(7,2,9,4,'Good benefits package and career growth','2025-02-28 21:41:32'),(9,2,8,3,'Amazing company culture and smart colleagues','2025-02-28 21:41:32'),(12,3,6,0,'xin chao','2025-05-22 15:48:28'),(13,9,6,3,'666','2025-05-22 16:00:07'),(14,1,2,2,'fairsssssccc','2025-06-07 20:47:25');
+/*!40000 ALTER TABLE `company_reviews` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +56,4 @@ CREATE TABLE `company_reviews` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:50
+-- Dump completed on 2025-06-11 22:13:02

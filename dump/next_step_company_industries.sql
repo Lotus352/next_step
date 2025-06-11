@@ -31,6 +31,16 @@ CREATE TABLE `company_industries` (
   CONSTRAINT `company_industries_ibfk_2` FOREIGN KEY (`industry_id`) REFERENCES `industries` (`industry_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `company_industries`
+--
+
+LOCK TABLES `company_industries` WRITE;
+/*!40000 ALTER TABLE `company_industries` DISABLE KEYS */;
+INSERT INTO `company_industries` VALUES (1,1),(2,1),(3,1),(10,1),(5,3),(4,4),(7,4),(9,4),(6,6),(8,6);
+/*!40000 ALTER TABLE `company_industries` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -41,4 +51,4 @@ CREATE TABLE `company_industries` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:52
+-- Dump completed on 2025-06-11 22:13:00

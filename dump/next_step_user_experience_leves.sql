@@ -27,10 +27,19 @@ CREATE TABLE `user_experience_leves` (
   `experience_id` bigint NOT NULL,
   PRIMARY KEY (`user_id`,`experience_id`),
   KEY `FKqjr3wdyc00jb996ejgdqrhcbj` (`experience_id`),
-  CONSTRAINT `FKa3covw26x8e8sncofapgstfu3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `FKa3covw26x8e8sncofapgstfu3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `FKqjr3wdyc00jb996ejgdqrhcbj` FOREIGN KEY (`experience_id`) REFERENCES `experience_levels` (`experience_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_experience_leves`
+--
+
+LOCK TABLES `user_experience_leves` WRITE;
+/*!40000 ALTER TABLE `user_experience_leves` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_experience_leves` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -41,4 +50,4 @@ CREATE TABLE `user_experience_leves` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:40
+-- Dump completed on 2025-06-11 22:13:02

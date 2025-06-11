@@ -29,6 +29,16 @@ CREATE TABLE `skills` (
   UNIQUE KEY `skill_name` (`skill_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `skills`
+--
+
+LOCK TABLES `skills` WRITE;
+/*!40000 ALTER TABLE `skills` DISABLE KEYS */;
+INSERT INTO `skills` VALUES (3,'AWS'),(10,'Azure'),(7,'CAD Design'),(16,'CI/CD'),(9,'Docker'),(1,'Java'),(8,'Kubernetes'),(5,'Machine Learning'),(15,'Microservices'),(13,'Node.js'),(6,'Project Management'),(2,'Python'),(12,'PyTorch'),(4,'React'),(14,'Spring Boot'),(11,'TensorFlow');
+/*!40000 ALTER TABLE `skills` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -39,4 +49,4 @@ CREATE TABLE `skills` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:50
+-- Dump completed on 2025-06-11 22:13:01

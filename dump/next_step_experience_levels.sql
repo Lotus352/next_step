@@ -29,6 +29,16 @@ CREATE TABLE `experience_levels` (
   UNIQUE KEY `experience_name` (`experience_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `experience_levels`
+--
+
+LOCK TABLES `experience_levels` WRITE;
+/*!40000 ALTER TABLE `experience_levels` DISABLE KEYS */;
+INSERT INTO `experience_levels` VALUES (1,'Intern'),(2,'Junior'),(5,'Lead'),(3,'Mid-Level'),(6,'Principal'),(4,'Senior');
+/*!40000 ALTER TABLE `experience_levels` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -39,4 +49,4 @@ CREATE TABLE `experience_levels` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:46
+-- Dump completed on 2025-06-11 22:13:02

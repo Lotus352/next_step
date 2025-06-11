@@ -31,8 +31,18 @@ CREATE TABLE `locations` (
   `house_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`location_id`),
   UNIQUE KEY `location_id` (`location_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `locations`
+--
+
+LOCK TABLES `locations` WRITE;
+/*!40000 ALTER TABLE `locations` DISABLE KEYS */;
+INSERT INTO `locations` VALUES (1,'United States','California','Los Angeles','Hollywood Blvd','123'),(2,'United States','New York','New York City','5th Avenue','789'),(3,'United Kingdom','England','London','Baker Street','221B'),(4,'Canada','Ontario','Toronto','Queen Street','456'),(5,'Australia','New South Wales','Sydney','George Street','678'),(6,'Japan',NULL,'Tokyo','Shibuya Dori','5-3'),(7,'Germany','Bavaria','Munich','Maximilianstraße','99'),(8,'France','Île-de-France','Paris','Champs-Élysées','250'),(9,'Italy','Lazio','Rome','Via del Corso','85'),(10,'Spain','Community of Madrid','Madrid','Gran Vía','110'),(27,'Andorra','Đà Nẵng','Llorts','Nguyễn Lương Bằng',NULL),(28,'Albania','Đà Nẵng','Petran','Nguyễn Lương Bằng',NULL);
+/*!40000 ALTER TABLE `locations` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -43,4 +53,4 @@ CREATE TABLE `locations` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-29 14:28:51
+-- Dump completed on 2025-06-11 22:13:02
