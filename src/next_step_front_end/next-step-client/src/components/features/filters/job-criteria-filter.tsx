@@ -9,7 +9,7 @@ import { formatTextEnum } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store"
-import { setFilter } from "@/store/slices/jobs-slice"
+import { setJobFilter } from "@/store/slices/jobs-slice"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { motion, AnimatePresence } from "framer-motion"
@@ -26,18 +26,18 @@ export default function JobCriteriaFilter() {
   // Handle adding a skill
   const handleAddSkill = (skillName: string) => {
     if (skillName === "all") {
-      dispatch(setFilter({ ...filter, skills: [] }))
+      dispatch(setJobFilter({ ...filter, skills: [] }))
       return
     }
     if (!filter.skills.includes(skillName)) {
-      dispatch(setFilter({ ...filter, skills: [...filter.skills, skillName] }))
+      dispatch(setJobFilter({ ...filter, skills: [...filter.skills, skillName] }))
     }
   }
 
   // Handle removing a skill
   const handleRemoveSkill = (skillName: string) => {
     dispatch(
-      setFilter({
+        setJobFilter({
         ...filter,
         skills: filter.skills.filter((skill) => skill !== skillName),
       }),
@@ -47,12 +47,12 @@ export default function JobCriteriaFilter() {
   // Handle adding an experience level
   const handleAddExperience = (experienceName: string) => {
     if (experienceName === "all") {
-      dispatch(setFilter({ ...filter, experienceLevels: [] }))
+      dispatch(setJobFilter({ ...filter, experienceLevels: [] }))
       return
     }
     if (!filter.experienceLevels.includes(experienceName)) {
       dispatch(
-        setFilter({
+          setJobFilter({
           ...filter,
           experienceLevels: [...filter.experienceLevels, experienceName],
         }),
@@ -63,7 +63,7 @@ export default function JobCriteriaFilter() {
   // Handle removing an experience level
   const handleRemoveExperience = (experienceName: string) => {
     dispatch(
-      setFilter({
+      setJobFilter({
         ...filter,
         experienceLevels: filter.experienceLevels.filter((exp) => exp !== experienceName),
       }),
@@ -73,7 +73,7 @@ export default function JobCriteriaFilter() {
   // Clear all filters
   const handleClearAll = () => {
     dispatch(
-      setFilter({
+      setJobFilter({
         ...filter,
         employmentType: DEFAULT_EMPLOYMENT_TYPE,
         experienceLevels: [],
@@ -126,7 +126,7 @@ export default function JobCriteriaFilter() {
           </div>
           <Select
             value={filter.employmentType || undefined}
-            onValueChange={(value) => dispatch(setFilter({ ...filter, employmentType: value }))}
+            onValueChange={(value) => dispatch(setJobFilter({ ...filter, employmentType: value }))}
           >
             <SelectTrigger
               id="employmentTypes"

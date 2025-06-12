@@ -80,7 +80,7 @@ const industriesSlice = createSlice({
   name: "industries",
   initialState,
   reducers: {
-    clear: () => initialState,
+    clearIndustries: () => initialState,
   },
   extraReducers: (b) => {
     b
@@ -122,5 +122,5 @@ const industriesSlice = createSlice({
   },
 });
 
-export const { clear } = industriesSlice.actions;
+export const { clearIndustries } = industriesSlice.actions;
 export default industriesSlice.reducer;

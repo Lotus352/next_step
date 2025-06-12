@@ -36,7 +36,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {fetchApplicationById, filterApplicationsByJob, fetchApplicationInfoByJob, setFilter } from "@/store/slices/job-applications-slice"
 import type { RootState, AppDispatch } from "@/store/store"
 import { motion } from "framer-motion"
-import { DEFAULT_JOB_SIZE, DEFAULT_PAGE } from "@/constants"
+import {DEFAULT_JOB_APPLICATION_SIZE, DEFAULT_PAGE} from "@/constants"
+
 interface ScoreData {
   score: number;
   details: {
@@ -50,7 +51,7 @@ export default function ApplicationList() {
   const dispatch: AppDispatch = useDispatch()
 
   const applications = useSelector((state: RootState) => state.jobApplications.content)
-  const status = useSelector((state: RootState) => state.jobApplications.status)
+  const statuses = useSelector((state: RootState) => state.jobApplications.statuses)
   const information = useSelector((state: RootState) => state.jobApplications.info)
   const page = useSelector((state: RootState) => state.jobApplications.page) || DEFAULT_PAGE
   const jobId = useSelector((state: RootState) => state.jobs.selected?.jobId)
@@ -58,7 +59,7 @@ export default function ApplicationList() {
 
   useEffect(() => {
     if (jobId) {
-      dispatch(filterApplicationsByJob({ jobId, page: page, size: DEFAULT_JOB_SIZE, filter }))
+      dispatch(filterApplicationsByJob({ jobId, page: page, size: DEFAULT_JOB_APPLICATION_SIZE, filter }))
       dispatch(fetchApplicationInfoByJob(jobId))
     }
   }, [dispatch, jobId, filter, page])
@@ -136,7 +137,7 @@ export default function ApplicationList() {
       .substring(0, 2)
   }
 
-  if (status === "loading" && applications.length === 0) {
+  if (statuses.filtering === "loading" && applications.length === 0) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-64 mb-4" />

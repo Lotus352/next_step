@@ -37,7 +37,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { statusApplication } from "@/store/slices/job-applications-slice"
 import type { RootState } from "@/store/store"
 import type { ResumeContent } from "@/types/resume-content-type"
 import type JobApplicationType from "@/types/job-application-type"
@@ -49,13 +48,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { toast } from "sonner"
 import SkillType from "@/types/skill-type"
 import type { AppDispatch } from "@/store/store"
+import {updateApplicationStatus} from "@/store/slices/job-applications-slice.ts";
 
 export default function ApplicationDetail() {
   const dispatch: AppDispatch = useDispatch()
 
   const application = useSelector((state: RootState) => state.jobApplications.selected) as JobApplicationType | null
   const job = useSelector((state: RootState) => state.jobs.selected) as JobType | null
-  const status = useSelector((state: RootState) => state.jobApplications.status)
+  const statuses = useSelector((state: RootState) => state.jobApplications.statuses)
 
   const parseScoreData = (score: string | ScoreData | null): ScoreData | null => {
     if (!score) return null
@@ -226,7 +226,7 @@ export default function ApplicationDetail() {
   const handleStatusChange = async (newStatus: string) => {
     if (!application) return;
     try {
-      await dispatch(statusApplication({ id: application.applicationId, status: newStatus })).unwrap()
+      await dispatch(updateApplicationStatus({ id: application.applicationId, status: newStatus })).unwrap()
       toast.success(`Application status updated to ${newStatus}`)
     } catch (error) {
       console.log(error)
@@ -234,7 +234,7 @@ export default function ApplicationDetail() {
     }
   }
 
-  if (status === "loading" || !application) {
+  if (statuses.filtering === "loading" || !application) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-64 mb-4" />

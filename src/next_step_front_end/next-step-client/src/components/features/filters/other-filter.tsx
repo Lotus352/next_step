@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { setFilter } from "@/store/slices/jobs-slice"
+import { setJobFilter } from "@/store/slices/jobs-slice"
 import type { AppDispatch, RootState } from "@/store/store"
 import { motion } from "framer-motion"
 import { DEFAULT_DATE_POSTED } from "@/constants"
@@ -17,12 +17,12 @@ export default function OtherFilter() {
 
   // Handle date posted selection
   const handleDatePostedChange = (value: string) => {
-    dispatch(setFilter({ ...filter, datePosted: value }))
+    dispatch(setJobFilter({ ...filter, datePosted: value }))
   }
 
   // Reset all date-related filters
   const handleClearAll = () => {
-    dispatch(setFilter({ ...filter, datePosted: DEFAULT_DATE_POSTED }))
+    dispatch(setJobFilter({ ...filter, datePosted: DEFAULT_DATE_POSTED }))
   }
 
   // UI state helpers

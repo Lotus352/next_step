@@ -25,19 +25,13 @@ import { formatDate, formatSalary, formatTextEnum } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { FavoriteNotification } from "@/components/favorite-notification"
+import {FavoriteNotification, NotificationState} from "@/components/notifications/favorite-notification.tsx"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store"
 import { toggleFavoriteJob } from "@/store/slices/jobs-slice"
 
 interface JobCardProps {
   job: JobType
-}
-
-interface NotificationState {
-  isVisible: boolean
-  jobTitle: string
-  type: "added" | "removed"
 }
 
 export function JobCard({ job }: JobCardProps) {
@@ -61,17 +55,13 @@ export function JobCard({ job }: JobCardProps) {
     if (isAuthenticated) {
       const wasFavorite = isBookmarked
 
-      // Trigger animation
       setBookmarkAnimation(true)
       setTimeout(() => setBookmarkAnimation(false), 1000)
 
-      // Update local state
       setIsBookmarked(!isBookmarked)
 
-      // Dispatch action
       await dispatch(toggleFavoriteJob({ id: job.jobId }))
 
-      // Show notification
       setNotification({
         isVisible: true,
         jobTitle: job.title,
@@ -88,7 +78,6 @@ export function JobCard({ job }: JobCardProps) {
 
   const handleApply = () => {
     // Implement your apply logic here
-    console.log(`Applying for job: ${job.title}`)
   }
 
   return (

@@ -19,8 +19,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
 import type CompanyReviewType from "@/types/company-review-type"
-import { fetchCompany } from "@/store/slices/companies-slice"
-import { ReviewNotification } from "@/components/review-notification"
+import {fetchCompanyById} from "@/store/slices/companies-slice"
+import { ReviewNotification } from "@/components/notifications/review-notification.tsx"
 
 type NotificationType = "success" | "error" | "info" | "warning"
 
@@ -34,6 +34,7 @@ interface NotificationState {
 function CompanyReviewsSection() {
   // Redux state
   const dispatch = useDispatch<AppDispatch>()
+
   const { items, status, totalElements } = useSelector((state: RootState) => state.companyReviews)
   const { selected } = useSelector((state: RootState) => state.jobs)
   const companyId = selected?.postedBy?.company?.companyId
@@ -89,7 +90,7 @@ function CompanyReviewsSection() {
 
   useEffect(() => {
     if (companyId) {
-      dispatch(fetchCompany(companyId))
+      dispatch(fetchCompanyById(companyId))
     }
   }, [companyId, dispatch])
 
@@ -181,7 +182,7 @@ function CompanyReviewsSection() {
       ).unwrap()
 
       if (companyId) {
-        await dispatch(fetchCompany(companyId)).unwrap()
+        await dispatch(fetchCompanyById(companyId)).unwrap()
       }
 
       showNotification("success", "Review Updated", "Your review has been updated successfully!")

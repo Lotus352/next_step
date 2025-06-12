@@ -5,7 +5,7 @@ import { Calendar, Banknote, Coins, RefreshCw, DollarSign } from "lucide-react"
 import { cn, currencySymbols } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { setFilter } from "@/store/slices/jobs-slice"
+import { setJobFilter } from "@/store/slices/jobs-slice"
 import type { AppDispatch, RootState } from "@/store/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -29,18 +29,18 @@ export default function SalaryFilter() {
 
   // Handle pay period selection
   const handlePayPeriodChange = (value: string) => {
-    dispatch(setFilter({ ...filter, payPeriod: value }))
+    dispatch(setJobFilter({ ...filter, payPeriod: value }))
   }
 
   // Handle currency selection
   const handleCurrencyChange = (value: string) => {
-    dispatch(setFilter({ ...filter, currency: value }))
+    dispatch(setJobFilter({ ...filter, currency: value }))
   }
 
   // Reset all salary-related filters
   const handleClearAll = () => {
     dispatch(
-      setFilter({
+      setJobFilter({
         ...filter,
         payPeriod: DEFAULT_PAY_PERIOD,
         currency: DEFAULT_CURRENCY,
@@ -191,7 +191,7 @@ export default function SalaryFilter() {
                     const maxSalary = filter.salaryRange?.maxSalary || DEFAULT_MAX_SALARY
 
                     dispatch(
-                      setFilter({
+                      setJobFilter({
                         ...filter,
                         salaryRange: {
                           minSalary,
@@ -236,7 +236,7 @@ export default function SalaryFilter() {
                     const minSalary = filter.salaryRange?.minSalary || DEFAULT_MIN_SALARY
 
                     dispatch(
-                      setFilter({
+                      setJobFilter({
                         ...filter,
                         salaryRange: {
                           minSalary: Math.min(minSalary, maxSalary),

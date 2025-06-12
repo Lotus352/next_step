@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { X, Briefcase, GraduationCap, Code, Loader2, AlertCircle, ChevronLeft } from "lucide-react"
 import { fetchSkills } from "@/store/slices/skills-slice"
 import { fetchLevels } from "@/store/slices/experience-levels-slice"
-import { fetchEmploymentTypes, updateJob, initializeJob } from "@/store/slices/jobs-slice"
+import { fetchEmploymentTypes, updateJobRequest, initializeJobRequest } from "@/store/slices/jobs-slice"
 import type { AppDispatch, RootState } from "@/store/store"
 import { DEFAULT_PAGE, DEFAULT_SKILL_SIZE, DEFAULT_LEVEL_SIZE } from "@/constants"
 import { motion } from "framer-motion"
@@ -34,7 +34,7 @@ export function CriteriaSelector({ onClearAll, onBack, onSubmit }: CriteriaSelec
   const employmentTypes = useSelector((state: RootState) => state.jobs.employmentTypes)
   const skillsStatus = useSelector((state: RootState) => state.skills.status)
   const levelsStatus = useSelector((state: RootState) => state.experienceLevels.status)
-  const reduxRequest = useSelector((state: RootState) => state.jobs.request)
+  const request = useSelector((state: RootState) => state.jobs.request)
 
   // Local state for form fields
   const [formData, setFormData] = useState({
@@ -45,17 +45,17 @@ export function CriteriaSelector({ onClearAll, onBack, onSubmit }: CriteriaSelec
 
   // Initialize request if it doesn't exist
   useEffect(() => {
-    if (!reduxRequest) {
-      dispatch(initializeJob())
+    if (!request) {
+      dispatch(initializeJobRequest())
     } else {
       // Populate form with existing data if available
       setFormData({
-        employmentType: reduxRequest.employmentType || "",
-        skillIds: reduxRequest.skillIds || [],
-        experienceLevelIds: reduxRequest.experienceLevelIds || [],
+        employmentType: request.employmentType || "",
+        skillIds: request.skillIds || [],
+        experienceLevelIds: request.experienceLevelIds || [],
       })
     }
-  }, [dispatch, reduxRequest])
+  }, [dispatch, request])
 
   const selectedEmploymentType = formData.employmentType || ""
   const selectedSkills = formData.skillIds?.map(String) || []
@@ -141,11 +141,11 @@ export function CriteriaSelector({ onClearAll, onBack, onSubmit }: CriteriaSelec
   const handleSubmit = () => {
     // Only save to Redux when clicking Submit
     const updatedJob = {
-      ...reduxRequest,
+      ...request,
       ...formData,
     } as JobRequest
 
-    dispatch(updateJob(updatedJob))
+    dispatch(updateJobRequest(updatedJob))
     onSubmit()
   }
 

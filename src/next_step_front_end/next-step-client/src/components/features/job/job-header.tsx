@@ -14,10 +14,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store"
-import { setFilter, filterJobs } from "@/store/slices/jobs-slice"
+import { setJobFilter, filterJobs } from "@/store/slices/jobs-slice"
 import type JobType from "@/types/job-type"
 import { motion } from "framer-motion"
 import { useState } from "react"
+import {DEFAULT_JOB_SIZE, DEFAULT_PAGE} from "@/constants.ts";
 
 interface JobHeaderProps {
   openFilter: () => void
@@ -28,7 +29,6 @@ export function JobHeader({ openFilter }: JobHeaderProps) {
   const filter = useSelector((state: RootState) => state.jobs.filter)
   const [isSearching, setIsSearching] = useState(false)
 
-  // Local state for search input - không tự động filter
   const [localSearchQuery, setLocalSearchQuery] = useState(filter.keyword || "")
 
   // Extract values from Redux state
@@ -42,13 +42,12 @@ export function JobHeader({ openFilter }: JobHeaderProps) {
       sortBy: field,
       sortDirection: newDirection,
     }
-    dispatch(setFilter(updatedFilter))
+    dispatch(setJobFilter(updatedFilter))
 
-    // Tự động filter khi sort
     dispatch(
       filterJobs({
-        page: 0,
-        size: 5,
+        page: DEFAULT_PAGE,
+        size: DEFAULT_JOB_SIZE,
         filter: updatedFilter,
       }),
     )
@@ -57,18 +56,16 @@ export function JobHeader({ openFilter }: JobHeaderProps) {
   const handleSearch = async () => {
     setIsSearching(true)
     try {
-      // Cập nhật filter với search query từ local state
       const updatedFilter = {
         ...filter,
         keyword: localSearchQuery,
       }
 
-      // Dispatch cả setFilter và filterJobs
-      dispatch(setFilter(updatedFilter))
+      dispatch(setJobFilter(updatedFilter))
       await dispatch(
         filterJobs({
-          page: 0,
-          size: 5,
+          page: DEFAULT_PAGE,
+          size: DEFAULT_JOB_SIZE,
           filter: updatedFilter,
         }),
       )
@@ -84,11 +81,11 @@ export function JobHeader({ openFilter }: JobHeaderProps) {
       keyword: term,
     }
 
-    dispatch(setFilter(updatedFilter))
+    dispatch(setJobFilter(updatedFilter))
     dispatch(
       filterJobs({
-        page: 0,
-        size: 5,
+        page: DEFAULT_PAGE,
+        size: DEFAULT_JOB_SIZE,
         filter: updatedFilter,
       }),
     )

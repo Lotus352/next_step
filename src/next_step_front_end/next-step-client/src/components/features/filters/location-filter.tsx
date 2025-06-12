@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store"
-import { setFilter } from "@/store/slices/jobs-slice"
+import { setJobFilter } from "@/store/slices/jobs-slice"
 import { useEffect } from "react"
 import { fetchCities } from "@/store/slices/locations-slice"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,18 +26,18 @@ export default function LocationFilter() {
   // Handle country selection
   const handleCountryChange = (value: string) => {
     const countryValue = value === "all" ? DEFAULT_COUNTRY : value
-    dispatch(setFilter({ ...filter, country: countryValue, city: DEFAULT_COUNTRY }))
+    dispatch(setJobFilter({ ...filter, country: countryValue, city: DEFAULT_COUNTRY }))
   }
 
   // Handle city selection
   const handleCityChange = (value: string) => {
     const cityValue = value === "all" ? DEFAULT_CITY : value
-    dispatch(setFilter({ ...filter, city: cityValue }))
+    dispatch(setJobFilter({ ...filter, city: cityValue }))
   }
 
   // Reset all location-related filters
   const handleClearAll = () => {
-    dispatch(setFilter({ ...filter, country: DEFAULT_COUNTRY, city: DEFAULT_CITY }))
+    dispatch(setJobFilter({ ...filter, country: DEFAULT_COUNTRY, city: DEFAULT_CITY }))
   }
 
   // UI state helpers

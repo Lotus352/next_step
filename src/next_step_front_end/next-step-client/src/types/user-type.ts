@@ -18,5 +18,4 @@ export default interface UserType {
     company: CompanyType | null;
     experienceLevel: experienceLevelType | null;
     skills: SkillType[];
-
 }

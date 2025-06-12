@@ -13,16 +13,13 @@ export default function CompanyLocation() {
   // Redux state
   const { selected } = useSelector((state: RootState) => state.jobs)
 
-  if (!selected) {
-    return <ErrorPage message="No job selected" />
-  }
-  const company = selected.postedBy.company
-  const location = company.location
+  const company = selected?.postedBy.company
+  const location = company?.location
 
   // Function to generate Google Maps URL
   const getGoogleMapsUrl = () => {
     return `https://www.google.com/maps/search/${encodeURIComponent(
-      `${company.name} ${location.city} ${location.countryName}`,
+      `${company?.name} ${location?.city} ${location?.countryName}`,
     )}`
   }
 
@@ -31,7 +28,7 @@ export default function CompanyLocation() {
     window.open(getGoogleMapsUrl(), "_blank")
   }
 
-  return (
+  return !selected ? <ErrorPage message="No job selected" /> : (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -85,9 +82,9 @@ export default function CompanyLocation() {
                   <MapPin className="h-10 w-10 text-primary drop-shadow-sm" />
                 </div>
                 <div className="bg-white/95 backdrop-blur-sm px-5 py-3 rounded-xl shadow-lg border border-white/20 text-center max-w-[85%]">
-                  <h3 className="font-semibold text-primary">{company.name}</h3>
+                  <h3 className="font-semibold text-primary">{company?.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {location.city}, {location.countryName}
+                    {location?.city}, {location?.countryName}
                   </p>
                 </div>
               </div>
@@ -108,30 +105,30 @@ export default function CompanyLocation() {
             <div className="flex items-start gap-3">
               <Avatar className="h-16 w-16 border-none rounded-2xl p-1 shadow-lg bg-background transition-all duration-300 hover:scale-110 hover:rotate-3">
                 <AvatarImage
-                  src={company.logoUrl || "/placeholder.svg?height=64&width=64"}
-                  alt={`${company.name} logo`}
+                  src={company?.logoUrl || "/placeholder.svg?height=64&width=64"}
+                  alt={`${company?.name} logo`}
                   className="object-cover transition-all duration-300 hover:brightness-110 p-0.5"
                 />
                 <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold text-2xl rounded-2xl transition-all duration-300 hover:bg-primary/90">
-                  {company.name.substring(0, 2).toUpperCase()}
+                  {company?.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
 
               <div className="flex-1">
-                <h4 className="font-semibold text-xl mb-2">{company.name}</h4>
+                <h4 className="font-semibold text-xl mb-2">{company?.name}</h4>
 
                 <div className="mt-3 space-y-3 text-muted-foreground">
                   <div className="flex items-center gap-3">
     
                     <div className="flex-1">
                       <p className="font-medium text-foreground">
-                        {location.city}, {location.countryName}
+                        {location?.city}, {location?.countryName}
                       </p>
-                      {location.state && <p className="text-sm">{location.state}</p>}
-                      {location.street && (
+                      {location?.state && <p className="text-sm">{location?.state}</p>}
+                      {location?.street && (
                         <p className="text-sm">
-                          {location.street}
-                          {location.houseNumber && `, ${location.houseNumber}`}
+                          {location?.street}
+                          {location?.houseNumber && `, ${location?.houseNumber}`}
                         </p>
                       )}
                     </div>

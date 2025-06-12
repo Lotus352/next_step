@@ -12,12 +12,13 @@ import CompanyLocation from "@/components/features/company/company-location"
 import { clearCompanySelected } from "@/store/slices/companies-slice"
 import Header from "@/components/layout/header"
 import JobApplicationCard from "@/components/features/job-application/job-application-card"
-import { clearJobApps, fetchApplicationInfoByJob } from "@/store/slices/job-applications-slice"
+import {clearJobApps, fetchApplicationInfoByJob} from "@/store/slices/job-applications-slice"
 import { motion } from "framer-motion"
 
 export default function JobDetailPage() {
   const dispatch = useDispatch<AppDispatch>()
-  const { id } = useParams()
+  const params = useParams()
+  const id = params?.id as string
 
   useEffect(() => {
     if (id) {

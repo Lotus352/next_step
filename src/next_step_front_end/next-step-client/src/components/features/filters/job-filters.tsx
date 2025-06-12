@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store.ts"
 import { fetchSalaryRange } from "@/store/slices/salary-slice.ts"
-import { resetFilter } from "@/store/slices/jobs-slice.ts"
+import { resetJobFilter } from "@/store/slices/jobs-slice.ts"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet.tsx"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs.tsx"
 import { Button } from "@/components/ui/button.tsx"
@@ -26,24 +26,23 @@ export function JobFilters({ isOpen, onOpenChange }: JobFiltersProps) {
 
   const filter = useSelector((state: RootState) => state.jobs.filter)
 
-  useEffect(() => {
-    if (filter.currency && filter.payPeriod) {
-      dispatch(
-        fetchSalaryRange({
-          currency: filter.currency,
-          payPeriod: filter.payPeriod,
-        }),
-      )
-    }
-  }, [dispatch, filter.currency, filter.payPeriod])
-
-
   const tabItems = [
     { id: "location", label: "Location", icon: MapPin },
     { id: "job", label: "Job", icon: Briefcase },
     { id: "salary", label: "Salary", icon: Coins },
     { id: "other", label: "Other", icon: Sparkles },
   ]
+
+  useEffect(() => {
+    if (filter.currency && filter.payPeriod) {
+      dispatch(
+          fetchSalaryRange({
+            currency: filter.currency,
+            payPeriod: filter.payPeriod,
+          }),
+      )
+    }
+  }, [dispatch, filter.currency, filter.payPeriod])
 
   return (
     <>
@@ -120,7 +119,7 @@ export function JobFilters({ isOpen, onOpenChange }: JobFiltersProps) {
           <SheetFooter className="pt-4 border-t border-border/30 flex flex-col sm:flex-row gap-3">
             <Button
               variant="outline"
-              onClick={() => dispatch(resetFilter())}
+              onClick={() => dispatch(resetJobFilter())}
               className="w-full sm:w-auto order-2 sm:order-1 flex items-center gap-2 border-border/50 hover:bg-primary/10 hover:text-primary transition-all duration-300"
             >
               <RefreshCw className="h-4 w-4" />

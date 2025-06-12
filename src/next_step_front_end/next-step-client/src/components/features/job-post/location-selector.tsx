@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { MapPin, Globe, Building2, Home, Hash, Loader2, X, ChevronLeft, ArrowRight } from "lucide-react"
 import { fetchCountries, fetchCities } from "@/store/slices/locations-slice"
-import { updateJob, initializeJob } from "@/store/slices/jobs-slice"
+import { updateJobRequest, initializeJobRequest } from "@/store/slices/jobs-slice"
 import type { AppDispatch, RootState } from "@/store/store"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -29,7 +29,7 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
   const countries = useSelector((state: RootState) => state.locations.countries || [])
   const cities = useSelector((state: RootState) => state.locations.cities || [])
   const status = useSelector((state: RootState) => state.locations.status)
-  const reduxRequest = useSelector((state: RootState) => state.jobs.request)
+  const request = useSelector((state: RootState) => state.jobs.request)
 
   // Local state for form fields
   const [formData, setFormData] = useState({
@@ -43,35 +43,25 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
 
   // Initialize request if it doesn't exist
   useEffect(() => {
-    if (!reduxRequest) {
-      dispatch(initializeJob())
-    } else if (reduxRequest.location) {
+    if (!request) {
+      dispatch(initializeJobRequest())
+    } else if (request.location) {
       // Populate form with existing data if available
       setFormData({
-        locationId: reduxRequest.location.locationId || "",
-        countryName: reduxRequest.location.countryName || "",
-        state: reduxRequest.location.state,
-        city: reduxRequest.location.city || "",
-        street: reduxRequest.location.street,
-        houseNumber: reduxRequest.location.houseNumber,
+        locationId: request.location.locationId || "",
+        countryName: request.location.countryName || "",
+        state: request.location.state,
+        city: request.location.city || "",
+        street: request.location.street,
+        houseNumber: request.location.houseNumber,
       })
     }
-  }, [dispatch, reduxRequest])
+  }, [dispatch, request])
 
   const isCitiesLoading = status === "loading"
   const hasCities = cities.length > 0
   const hasLocationFilters =
     !!formData.countryName || !!formData.city || !!formData.state || !!formData.street || !!formData.houseNumber
-
-  useEffect(() => {
-    dispatch(fetchCountries())
-  }, [dispatch])
-
-  useEffect(() => {
-    if (formData.countryName) {
-      dispatch(fetchCities(formData.countryName))
-    }
-  }, [formData.countryName, dispatch])
 
   const handleFieldChange = (field: string, value: string | null) => {
     // Reset city when country changes
@@ -104,16 +94,26 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
   const handleNext = () => {
     // Only save to Redux when clicking Next
     const updatedJob = {
-      ...reduxRequest,
+      ...request,
       location: formData,
     } as JobRequest
 
-    dispatch(updateJob(updatedJob))
+    dispatch(updateJobRequest(updatedJob))
     onNext()
   }
 
   // Check if form is complete for local validation
   const isFormComplete = !!formData.countryName
+
+  useEffect(() => {
+    dispatch(fetchCountries())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (formData.countryName) {
+      dispatch(fetchCities(formData.countryName))
+    }
+  }, [formData.countryName, dispatch])
 
   return (
     <Card className="shadow-md border-border/30 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden">

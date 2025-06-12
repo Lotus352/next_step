@@ -29,22 +29,18 @@ import { formatTextEnum } from "@/lib/utils"
 import type { RootState, AppDispatch } from "@/store/store"
 import { useSelector, useDispatch } from "react-redux"
 import { toggleFavoriteJob } from "@/store/slices/jobs-slice"
-import { FavoriteNotification } from "@/components/favorite-notification"
+import {FavoriteNotification, NotificationState} from "@/components/notifications/favorite-notification.tsx"
 import { useNavigate } from "react-router-dom"
 import DestructiveAlert from "@/components/destructive-alert"
 import { Separator } from "@/components/ui/separator"
 
-interface NotificationState {
-  isVisible: boolean
-  jobTitle: string
-  type: "added" | "removed"
-}
 
 export default function JobDetailHeader() {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const [applied, setApplied] = useState(false)
   const [favoriteAnimation, setFavoriteAnimation] = useState(false)
+  const [localFavoriteState, setLocalFavoriteState] = useState(false)
   const [notification, setNotification] = useState<NotificationState>({
     isVisible: false,
     jobTitle: "",
@@ -53,18 +49,6 @@ export default function JobDetailHeader() {
 
   const { selected } = useSelector((state: RootState) => state.jobs)
   const isAuthenticated = useSelector((state: RootState) => state.auth.status === "authenticated")
-
-  const [localFavoriteState, setLocalFavoriteState] = useState(false)
-
-  useEffect(() => {
-    if (selected) {
-      setLocalFavoriteState(selected.isFavorite || false)
-    }
-  }, [selected?.isFavorite, selected])
-
-  const handleApply = () => {
-    setApplied(true)
-  }
 
   const handleFavoriteToggle = async () => {
     if (!selected) return
@@ -97,6 +81,16 @@ export default function JobDetailHeader() {
   const closeNotification = () => {
     setNotification((prev) => ({ ...prev, isVisible: false }))
   }
+
+  const handleApply = () => {
+    setApplied(true)
+  }
+
+  useEffect(() => {
+    if (selected) {
+      setLocalFavoriteState(selected.isFavorite || false)
+    }
+  }, [selected?.isFavorite, selected])
 
   return !selected ? (
     <DestructiveAlert message="No job selected" />

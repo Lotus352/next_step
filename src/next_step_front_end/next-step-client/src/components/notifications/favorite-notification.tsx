@@ -2,8 +2,14 @@
 
 import { useEffect } from "react"
 import { Heart, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button.tsx"
 import { motion, AnimatePresence } from "framer-motion"
+
+export interface NotificationState {
+  isVisible: boolean
+  jobTitle: string
+  type: "added" | "removed"
+}
 
 interface FavoriteNotificationProps {
   isVisible: boolean
@@ -27,7 +33,7 @@ export function FavoriteNotification({ isVisible, jobTitle, onClose, type }: Fav
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed top-20 right-4 z-[100]" // Tăng z-index và điều chỉnh top
+          className="fixed top-20 right-4 z-[100]"
           initial={{ opacity: 0, x: 100, y: 0 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           exit={{ opacity: 0, x: 100 }}

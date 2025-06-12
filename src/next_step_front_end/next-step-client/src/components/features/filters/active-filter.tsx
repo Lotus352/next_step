@@ -9,7 +9,7 @@ import { currencySymbols, formatTextEnum } from "@/lib/utils.ts"
 import type { JSX } from "react"
 import { DATE_POSTED_LABELS, DEFAULT_MAX_SALARY } from "@/constants"
 import { DEFAULT_MIN_SALARY } from "@/constants"
-import { resetFilter } from "@/store/slices/jobs-slice"
+import { resetJobFilter } from "@/store/slices/jobs-slice"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function ActiveFilter() {
@@ -105,7 +105,7 @@ export default function ActiveFilter() {
           variant="outline"
           size="sm"
           className="h-8 px-3 rounded-full border-border/50 hover:bg-primary/10 hover:text-primary transition-all duration-300 flex items-center gap-1.5"
-          onClick={() => dispatch(resetFilter())}
+          onClick={() => dispatch(resetJobFilter())}
         >
           <X className="h-3.5 w-3.5" />
           Clear all
