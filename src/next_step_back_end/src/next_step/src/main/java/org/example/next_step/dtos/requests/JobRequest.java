@@ -11,7 +11,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class JobRequest {
-    private Long jobId;
     private String title;
     private String shortDescription;
     private String detailedDescription;

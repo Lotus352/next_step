@@ -62,6 +62,8 @@ public class User implements UserDetails {
 
     private String nationality;
 
+    private String bio;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -88,9 +90,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @ManyToOne
-    @JoinColumn(name = "experience_id")
-    private ExperienceLevel experienceLevel;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserExperience> experiences = new HashSet<>();
 
     @ManyToMany
     @JoinTable(

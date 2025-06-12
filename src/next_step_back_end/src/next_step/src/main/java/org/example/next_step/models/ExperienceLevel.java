@@ -21,6 +21,6 @@ public class ExperienceLevel {
     @Column(name = "experience_name", unique = true, nullable = false, length = 100)
     private String experienceName;
 
-    @OneToMany(mappedBy = "experienceLevel", cascade = CascadeType.ALL)
-    private Set<User> users;
+    @OneToMany(mappedBy = "experienceLevel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserExperience> userExperiences;
 }

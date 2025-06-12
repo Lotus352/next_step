@@ -13,23 +13,25 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     public static UserResponse toDTO(User user) {
-        if (user == null) {
-            return null;
-        }
         return UserResponse.builder()
                 .userId(user.getUserId())
-                .roles(user.getRoles().stream().map(RoleMapper::toDTO).collect(Collectors.toSet()))
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .avatarUrl(user.getAvatarUrl())
                 .resumeUrl(user.getResumeUrl())
-                .status(user.getStatus() != null ? user.getStatus().toString() : null)
+                .status(user.getStatus().toString())
                 .phoneNumber(user.getPhoneNumber())
+                .bio(user.getBio() != null ? user.getBio() : "")
                 .nationality(user.getNationality())
-                .company(user.getCompany() != null ? CompanyMapper.toDTO(user.getCompany()) : null)
-                .experienceLevel(user.getExperienceLevel() != null ? ExperienceLevelMapper.toDTO(user.getExperienceLevel()) : null)
-                .skills(user.getSkills() != null ? user.getSkills().stream().map(SkillMapper::toDTO).collect(Collectors.toSet()) : null)
+                .roles(user.getRoles().stream().map(RoleMapper::toDTO).collect(Collectors.toSet()))
+                .company(CompanyMapper.toDTO(user.getCompany()))
+                .experiences(user.getExperiences() != null ?
+                        user.getExperiences().stream()
+                                .map(UserExperienceMapper::toDTO)
+                                .collect(Collectors.toSet()) :
+                        new HashSet<>())
+                .skills(user.getSkills().stream().map(SkillMapper::toDTO).collect(Collectors.toSet()))
                 .build();
     }
 
@@ -40,7 +42,6 @@ public class UserMapper {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
         user.setFullName(request.getFullName());
         user.setAvatarUrl(request.getAvatarUrl());
         user.setResumeUrl(request.getResumeUrl());
@@ -63,6 +64,9 @@ public class UserMapper {
         }
         if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
             user.setRoles(new HashSet<>(roleRepo.findAllById(request.getRoleIds())));
+        }
+        if (request.getBio() != null) {
+            user.setBio(request.getBio());
         }
         return user;
     }
@@ -90,6 +94,9 @@ public class UserMapper {
         }
         if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
             user.setRoles(new HashSet<>(roleRepo.findAllById(request.getRoleIds())));
+        }
+        if (request.getBio() != null) {
+            user.setBio(request.getBio());
         }
     }
 }

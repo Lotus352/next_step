@@ -18,7 +18,6 @@ import {
   GraduationCap,
   Bell,
   Building,
-  BarChart,
   Users,
   MessageSquare,
   Sparkles,
@@ -483,8 +482,6 @@ export default function Header() {
                   {[
                     { to: "/candidate/profile", icon: User, label: "My Profile" },
                     { to: "/candidate/resume", icon: FileText, label: "My Resume" },
-                    { to: "/candidate/applications", icon: Briefcase, label: "My Applications" },
-                    { to: "/candidate/courses", icon: GraduationCap, label: "Training Courses" },
                     { to: "/candidate/notifications", icon: Bell, label: "Job Alerts" },
                   ].map((item) => (
                     <Link
@@ -511,7 +508,6 @@ export default function Header() {
                 </div>
                 <div className="space-y-1">
                   {[
-                    { to: "/employer/dashboard", icon: BarChart, label: "Dashboard" },
                     { to: "/employer/post-job", icon: PlusCircle, label: "Post a Job" },
                     { to: "/employer/manage-jobs", icon: Building, label: "Manage Jobs" },
                     { to: "/employer/candidates", icon: Users, label: "Browse Candidates" },

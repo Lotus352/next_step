@@ -8,6 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class SkillRequest {
-    private Long skillId;
     private String skillName;
 }

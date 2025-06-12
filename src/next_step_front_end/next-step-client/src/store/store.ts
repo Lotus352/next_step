@@ -10,6 +10,7 @@ import notificationsReducer from "./slices/notifications-slice.ts";
 import skillsReducer from "./slices/skills-slice.ts";
 import experienceLevelsReducer from "./slices/experience-levels-slice.ts";
 import salaryReducer from "@/store/slices/salary-slice.ts";
+import userReducer from "@/store/slices/user-slice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
     notifications: notificationsReducer,
     skills: skillsReducer,
     experienceLevels: experienceLevelsReducer,
-    salaries: salaryReducer
+    salaries: salaryReducer,
+    user: userReducer,
   },
 });
 

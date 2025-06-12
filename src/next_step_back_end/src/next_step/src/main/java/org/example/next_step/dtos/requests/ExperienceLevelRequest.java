@@ -8,6 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ExperienceLevelRequest {
-    private Long experienceId;
     private String experienceName;
 }

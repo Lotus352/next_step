@@ -10,7 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class CompanyRequest {
-    private Long companyId;
     private String name;
     private String description;
     private LocationRequest location;

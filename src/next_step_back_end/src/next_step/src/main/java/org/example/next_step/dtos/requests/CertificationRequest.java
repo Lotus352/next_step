@@ -10,7 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class CertificationRequest {
-
     @NotBlank
     @Size(max = 45)
     private String certificationsName;

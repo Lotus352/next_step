@@ -23,7 +23,6 @@ public class LocationMapper {
         if (request == null) return null;
 
         Location location = new Location();
-        location.setLocationId(request.getLocationId());
         location.setCountryName(request.getCountryName());
         location.setState(request.getState());
         location.setCity(request.getCity());

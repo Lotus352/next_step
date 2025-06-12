@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class LocationRequest {
-    private Long locationId;
     private String countryName;
     private String state;
     private String city;

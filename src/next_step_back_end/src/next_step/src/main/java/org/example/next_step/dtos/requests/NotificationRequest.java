@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class NotificationRequest {
-    private Long notificationId;
     private Long userId;
     private Long jobId;
     private String message;

@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `next_step` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `next_step`;
--- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: next_step
+-- Host: localhost    Database: next_step
 -- ------------------------------------------------------
--- Server version	8.0.40
+-- Server version	8.0.42-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -604,29 +602,36 @@ INSERT INTO `skills` VALUES (3,'AWS'),(10,'Azure'),(7,'CAD Design'),(16,'CI/CD')
 UNLOCK TABLES;
 
 --
--- Table structure for table `user_experience_leves`
+-- Table structure for table `user_experience_levels`
 --
 
-DROP TABLE IF EXISTS `user_experience_leves`;
+DROP TABLE IF EXISTS `user_experience_levels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_experience_leves` (
-  `user_id` bigint NOT NULL,
+CREATE TABLE `user_experience_levels` (
   `experience_id` bigint NOT NULL,
-  PRIMARY KEY (`user_id`,`experience_id`),
-  KEY `FKqjr3wdyc00jb996ejgdqrhcbj` (`experience_id`),
-  CONSTRAINT `FKa3covw26x8e8sncofapgstfu3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `FKqjr3wdyc00jb996ejgdqrhcbj` FOREIGN KEY (`experience_id`) REFERENCES `experience_levels` (`experience_id`)
+  `user_id` bigint NOT NULL,
+  `company` varchar(255) DEFAULT NULL,
+  `description` text,
+  `end_date` timestamp NULL DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `start_date` timestamp NULL DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`experience_id`,`user_id`),
+  KEY `FKta58tpauvpmwlokn075cj086r` (`user_id`),
+  CONSTRAINT `FKgh36255x8xg77rxhasu4e46yw` FOREIGN KEY (`experience_id`) REFERENCES `experience_levels` (`experience_id`),
+  CONSTRAINT `FKta58tpauvpmwlokn075cj086r` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user_experience_leves`
+-- Dumping data for table `user_experience_levels`
 --
 
-LOCK TABLES `user_experience_leves` WRITE;
-/*!40000 ALTER TABLE `user_experience_leves` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_experience_leves` ENABLE KEYS */;
+LOCK TABLES `user_experience_levels` WRITE;
+/*!40000 ALTER TABLE `user_experience_levels` DISABLE KEYS */;
+INSERT INTO `user_experience_levels` VALUES (1,6,'Tech Solutions Inc.','Leading development of web applications using React and Node.js.','2025-02-28 21:41:32','San Francisco, CA','2024-02-29 21:41:32','Software Engineer'),(2,6,'Digital Innovations','Worked on frontend development using HTML, CSS, and JavaScript.',NULL,'Boston, MA','2025-02-28 21:41:32','Junior Developer');
+/*!40000 ALTER TABLE `user_experience_levels` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -706,7 +711,7 @@ CREATE TABLE `user_skills` (
 
 LOCK TABLES `user_skills` WRITE;
 /*!40000 ALTER TABLE `user_skills` DISABLE KEYS */;
-INSERT INTO `user_skills` VALUES (6,1),(7,1),(6,2),(6,3),(6,4);
+INSERT INTO `user_skills` VALUES (6,1),(7,1),(6,2),(6,3),(6,4),(6,8),(6,11),(6,12),(6,13),(6,16);
 /*!40000 ALTER TABLE `user_skills` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -733,6 +738,7 @@ CREATE TABLE `users` (
   `experience_id` bigint DEFAULT NULL,
   `phone_number` varchar(255) NOT NULL,
   `nationality` varchar(255) DEFAULT NULL,
+  `bio` text,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
@@ -749,7 +755,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin1','admin@nextstep.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Michael Johnson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(2,'employer1','hr@google.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Sarah Wilson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',1,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(3,'employer2','careers@microsoft.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','James Smith','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',2,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(4,'employer3','recruiting@samsung.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Ji-hoon Kim','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',3,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(5,'employer4','hiring@tesla.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Elon Musk','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',9,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(6,'candidate1','john.doe@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','John Doe','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(7,'candidate2','jane.smith@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Jane Smith','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(8,'candidate3','robert.brown@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Robert Brown','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(9,'candidate4','emily.wilson@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Emily Wilson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland'),(10,'banned1','banned@test.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Banned User','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'BANNED',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland');
+INSERT INTO `users` VALUES (1,'admin1','admin@nextstep.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Michael Johnson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(2,'employer1','hr@google.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Sarah Wilson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',1,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(3,'employer2','careers@microsoft.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','James Smith','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',2,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(4,'employer3','recruiting@samsung.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Ji-hoon Kim','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',3,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(5,'employer4','hiring@tesla.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Elon Musk','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',9,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(6,'candidate1','john.doe@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','John Doe','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(7,'candidate2','jane.smith@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Jane Smith','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(8,'candidate3','robert.brown@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Robert Brown','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(9,'candidate4','emily.wilson@email.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Emily Wilson','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'ACTIVE',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL),(10,'banned1','banned@test.com','$2a$12$DfUWeUarVHtUs/LdTPJWyuBPL6ZjNRymFYOx/VZAapa0DFPV2H1GC','Banned User','https://cdn.vectorstock.com/i/2000v/51/87/student-avatar-user-profile-icon-vector-47025187.avif',NULL,'BANNED',NULL,0,'2025-02-28 21:41:32','2025-05-22 15:53:55',1,'0867166915','Scotland',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -762,4 +768,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-11 22:14:11
+-- Dump completed on 2025-06-13 16:17:56

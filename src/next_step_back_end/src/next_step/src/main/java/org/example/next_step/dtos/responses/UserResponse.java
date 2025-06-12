@@ -18,9 +18,10 @@ public class UserResponse {
     private String avatarUrl;
     private String resumeUrl;
     private String status;
+    private String bio;
     private String phoneNumber;
     private String nationality;
     private CompanyResponse company;
-    private ExperienceLevelResponse experienceLevel;
+    private Set<UserExperienceResponse> experiences;
     private Set<SkillResponse> skills;
 }

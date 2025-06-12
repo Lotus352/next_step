@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class JobApplicationRequest {
-    private Long applicationId;
     private Long userId;
     private Long jobId;
     private String resumeUrl;

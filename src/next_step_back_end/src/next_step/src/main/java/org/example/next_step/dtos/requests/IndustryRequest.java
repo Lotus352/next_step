@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class IndustryRequest {
-    private Long industryId;
     private String industryName;
     private String icon;
 }

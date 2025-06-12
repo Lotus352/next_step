@@ -12,6 +12,7 @@ import JobPostPage from "@/pages/job-post-page.tsx";
 import {AppDispatch, RootState} from "./store/store";
 import {initializeAuth} from "@/store/slices/auth-slice.ts";
 import Loading from "@/components/loading.tsx";
+import UserProfilePage from "@/pages/user-profile-page.tsx";
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> =
@@ -88,6 +89,12 @@ function App() {
                             <AuthRoute>
                                 <SignupForm/>
                             </AuthRoute>
+                        }/>
+
+                        <Route path="/candidate/profile" element={
+                            <ProtectedRoute allowedRoles={['candidate']}>
+                                <UserProfilePage/>
+                            </ProtectedRoute>
                         }/>
 
                         <Route path="/employer/candidates" element={

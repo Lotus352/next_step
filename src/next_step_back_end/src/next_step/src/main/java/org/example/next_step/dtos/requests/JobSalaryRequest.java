@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class JobSalaryRequest {
-    private Long salaryId;
     private Double minSalary;
     private Double maxSalary;
     private String currency;

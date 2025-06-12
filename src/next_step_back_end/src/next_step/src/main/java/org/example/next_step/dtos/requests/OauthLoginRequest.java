@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class OauthLoginRequest {
-    private Long oauthLoginId;
     private Long userId;
     private String provider;
     private String providerUserId;

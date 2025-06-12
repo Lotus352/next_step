@@ -5,7 +5,6 @@ import ReviewStar from "@/components/review-star"
 import type CompanyReviewType from "@/types/company-review-type"
 import { fallbackInitials } from "@/lib/utils"
 import { CalendarDays, Quote } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 
 interface Props {
@@ -62,15 +61,6 @@ export default function CompanyReview({ review }: Props) {
               </h4>
 
               <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                {review.user.experienceLevel && (
-                  <Badge
-                    variant="outline"
-                    className="text-xs font-medium px-3 py-1 bg-primary/5 hover:bg-primary/10 transition-colors border-primary/20 text-primary/80 rounded-full"
-                  >
-                    {review.user.experienceLevel.experienceName}
-                  </Badge>
-                )}
-
                 <div className="flex items-center text-xs text-muted-foreground">
                   <CalendarDays className="h-3.5 w-3.5 mr-1.5 text-primary/70" />
                   {reviewDate}

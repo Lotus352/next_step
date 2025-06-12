@@ -27,14 +27,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JobService {
-
     private final JobRepository jobRepo;
     private final CompanyRepository companyRepo;
     private final JobSalaryRepository jobSalaryRepo;
     private final SkillRepository skillRepo;
     private final ExperienceLevelRepository experienceRepo;
     private final UserRepository userRepo;
-    private final LocationRepository locationRepo;
 
     /* ─────────────────────── QUERIES ─────────────────────── */
 

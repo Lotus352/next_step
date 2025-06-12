@@ -50,7 +50,7 @@ public class CompanyMapper {
         company.setSpecialities(request.getSpecialities() != null ? request.getSpecialities() : new HashSet<>());
 
         if (request.getLocation() != null) {
-            company.setLocation(LocationMapper.toEntity(request.getLocation())); // ✅ Chuyển đổi từ LocationRequest thành Location
+            company.setLocation(LocationMapper.toEntity(request.getLocation()));
         }
 
         if (request.getIndustryIds() != null && !request.getIndustryIds().isEmpty()) {
