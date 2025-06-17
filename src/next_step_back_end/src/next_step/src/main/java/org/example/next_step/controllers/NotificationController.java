@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for Notification entity.
- */
 @RestController
 @RequestMapping(path = "/api/notifications", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     private final NotificationService service;
-    
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<NotificationResponse>> findAll(

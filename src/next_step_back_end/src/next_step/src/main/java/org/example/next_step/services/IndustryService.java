@@ -13,16 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Business logic for Industry entity.
- */
 @Service
 @RequiredArgsConstructor
 public class IndustryService {
 
     private final IndustryRepository repo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<IndustryResponse> findAll(int page, int size) {

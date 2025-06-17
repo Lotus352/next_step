@@ -21,7 +21,7 @@ export default function LocationFilter() {
   const cities = useSelector((state: RootState) => state.locations.cities || [])
   const countries = useSelector((state: RootState) => state.locations.countries || [])
   const filter = useSelector((state: RootState) => state.jobs.filter || [])
-  const citiesStatus = useSelector((state: RootState) => state.locations.status)
+  const citiesStatus = useSelector((state: RootState) => state.locations.statuses.fetchingCities)
 
   // Handle country selection
   const handleCountryChange = (value: string) => {
@@ -47,7 +47,7 @@ export default function LocationFilter() {
 
   useEffect(() => {
     if (filter.country && filter.country !== "all") {
-      dispatch(fetchCities(filter.country))
+      dispatch(fetchCities({ country: filter.country }))
     }
   }, [dispatch, filter.country])
 

@@ -12,9 +12,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for Notification entity.
- */
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -22,8 +19,6 @@ public class NotificationService {
     private final NotificationRepository repo;
     private final UserRepository userRepo;
     private final JobRepository jobRepo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<NotificationResponse> findAll(int page, int size) {

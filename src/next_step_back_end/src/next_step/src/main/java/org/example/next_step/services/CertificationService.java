@@ -11,9 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business layer for Certification, implemented the same way as SkillService.
- */
 @Service
 @RequiredArgsConstructor
 public class CertificationService {
@@ -34,9 +31,7 @@ public class CertificationService {
         return CertificationMapper.toDTO(entity);
     }
 
-    /* ------------------------------------------------------------------ */
-    /*                              COMMAND                               */
-    /* ------------------------------------------------------------------ */
+    /* ---------- commands ---------- */
 
     @Transactional
     public CertificationResponse create(CertificationRequest request) {
@@ -59,6 +54,9 @@ public class CertificationService {
 
     @Transactional
     public void delete(Long id) {
+        Certification entity = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Certification not found"));
+
         repository.deleteById(id);
     }
 }

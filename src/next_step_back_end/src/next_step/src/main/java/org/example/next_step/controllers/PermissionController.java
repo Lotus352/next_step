@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for Permission entity.
- */
 @RestController
 @RequestMapping(path = "/api/permissions", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class PermissionController {
 
     private final PermissionService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<PermissionResponse>> findAll(

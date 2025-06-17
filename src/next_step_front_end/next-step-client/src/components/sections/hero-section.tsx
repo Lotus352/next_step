@@ -1,43 +1,67 @@
-"use client"
+"use client";
 
-import { ArrowRight, CheckCircle, Search, MapPin, Building2, Briefcase } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "@/store/store"
-import { useEffect, useState } from "react"
-import { fetchCities, fetchCountries } from "@/store/slices/locations-slice"
-import { fetchIndustries } from "@/store/slices/industries-slice"
-import { motion } from "framer-motion"
+import {
+  ArrowRight,
+  CheckCircle,
+  Search,
+  MapPin,
+  Building2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/store";
+import { useEffect, useState } from "react";
+import { fetchCities, fetchCountries } from "@/store/slices/locations-slice";
+import { fetchIndustries } from "@/store/slices/industries-slice";
+import { motion } from "framer-motion";
+import { DEFAULT_INDUSTRY_SIZE, DEFAULT_PAGE } from "@/constants.ts";
 
 export default function HeroSection() {
-  const dispatch = useDispatch<AppDispatch>()
-  const { countries, cities } = useSelector((state: RootState) => state.locations)
-  const [selectedCountry, setSelectedCountry] = useState<string>("")
-  const [selectedCity, setSelectedCity] = useState<string>("")
+  const dispatch = useDispatch<AppDispatch>();
+  const { countries, cities } = useSelector(
+    (state: RootState) => state.locations,
+  );
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   useEffect(() => {
-    dispatch(fetchCountries())
-    dispatch(fetchIndustries({ page: 0, size: 9999 }))
-  }, [dispatch])
+    dispatch(fetchCountries());
+    dispatch(
+      fetchIndustries({ page: DEFAULT_PAGE, size: DEFAULT_INDUSTRY_SIZE }),
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     if (selectedCountry) {
-      dispatch(fetchCities(selectedCountry))
+      dispatch(fetchCities({ country: selectedCountry }));
     }
-  }, [selectedCountry, dispatch])
+  }, [selectedCountry, dispatch]);
 
   useEffect(() => {
     if (cities.length > 0) {
-      setSelectedCity(cities[0])
+      setSelectedCity(cities[0]);
     }
-  }, [cities])
+  }, [cities]);
 
   const handleCountryChange = (value: string) => {
-    setSelectedCountry(value)
-  }
+    setSelectedCountry(value);
+  };
 
   // Animation variants
   const containerVariants = {
@@ -49,7 +73,7 @@ export default function HeroSection() {
         delayChildren: 0.3,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -61,7 +85,7 @@ export default function HeroSection() {
         ease: "easeOut",
       },
     },
-  }
+  };
 
   return (
     <section className="relative py-20 md:py-28 lg:py-32 overflow-hidden">
@@ -159,22 +183,6 @@ export default function HeroSection() {
             initial="hidden"
             animate="visible"
           >
-            {/* Logo Badge */}
-            <motion.div
-              className="inline-flex items-center gap-3 self-start"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-xl blur-sm opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
-                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 shadow-sm">
-                  <Briefcase className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-              <span className="text-sm font-semibold text-primary">Next Step Career Platform</span>
-            </motion.div>
-
             {/* Main Heading */}
             <motion.div className="space-y-4" variants={itemVariants}>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -194,13 +202,16 @@ export default function HeroSection() {
               </h1>
 
               <p className="max-w-[600px] text-muted-foreground text-lg md:text-xl leading-relaxed">
-                Take your next step toward success. Discover thousands of job opportunities with all the information you
-                need.
+                Take your next step toward success. Discover thousands of job
+                opportunities with all the information you need.
               </p>
             </motion.div>
 
             {/* CTA Buttons */}
-            <motion.div className="flex flex-col gap-3 sm:flex-row" variants={itemVariants}>
+            <motion.div
+              className="flex flex-col gap-3 sm:flex-row"
+              variants={itemVariants}
+            >
               <Button
                 size="lg"
                 className="gap-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 font-semibold text-base"
@@ -285,7 +296,9 @@ export default function HeroSection() {
                       <div className="p-1.5 rounded-lg bg-primary/10">
                         <MapPin className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="font-semibold text-foreground">Location</span>
+                      <span className="font-semibold text-foreground">
+                        Location
+                      </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -297,7 +310,11 @@ export default function HeroSection() {
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-border/30">
                             {countries.map((country, index) => (
-                              <SelectItem key={index} value={country} className="font-medium">
+                              <SelectItem
+                                key={index}
+                                value={country}
+                                className="font-medium"
+                              >
                                 {country}
                               </SelectItem>
                             ))}
@@ -317,7 +334,11 @@ export default function HeroSection() {
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-border/30">
                             {cities.map((city, index) => (
-                              <SelectItem key={index} value={city} className="font-medium">
+                              <SelectItem
+                                key={index}
+                                value={city}
+                                className="font-medium"
+                              >
                                 {city}
                               </SelectItem>
                             ))}
@@ -333,7 +354,9 @@ export default function HeroSection() {
                       <div className="p-1.5 rounded-lg bg-primary/10">
                         <Building2 className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="font-semibold text-foreground">Job Details</span>
+                      <span className="font-semibold text-foreground">
+                        Job Details
+                      </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -344,16 +367,28 @@ export default function HeroSection() {
                             <SelectValue placeholder="Job Type" />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-border/30">
-                            <SelectItem value="full-time" className="font-medium">
+                            <SelectItem
+                              value="full-time"
+                              className="font-medium"
+                            >
                               Full-time
                             </SelectItem>
-                            <SelectItem value="part-time" className="font-medium">
+                            <SelectItem
+                              value="part-time"
+                              className="font-medium"
+                            >
                               Part-time
                             </SelectItem>
-                            <SelectItem value="contract" className="font-medium">
+                            <SelectItem
+                              value="contract"
+                              className="font-medium"
+                            >
                               Contract
                             </SelectItem>
-                            <SelectItem value="internship" className="font-medium">
+                            <SelectItem
+                              value="internship"
+                              className="font-medium"
+                            >
                               Internship
                             </SelectItem>
                           </SelectContent>
@@ -367,19 +402,31 @@ export default function HeroSection() {
                             <SelectValue placeholder="Category" />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-border/30">
-                            <SelectItem value="technology" className="font-medium">
+                            <SelectItem
+                              value="technology"
+                              className="font-medium"
+                            >
                               Technology
                             </SelectItem>
-                            <SelectItem value="healthcare" className="font-medium">
+                            <SelectItem
+                              value="healthcare"
+                              className="font-medium"
+                            >
                               Healthcare
                             </SelectItem>
-                            <SelectItem value="education" className="font-medium">
+                            <SelectItem
+                              value="education"
+                              className="font-medium"
+                            >
                               Education
                             </SelectItem>
                             <SelectItem value="finance" className="font-medium">
                               Finance
                             </SelectItem>
-                            <SelectItem value="marketing" className="font-medium">
+                            <SelectItem
+                              value="marketing"
+                              className="font-medium"
+                            >
                               Marketing
                             </SelectItem>
                           </SelectContent>
@@ -401,5 +448,5 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

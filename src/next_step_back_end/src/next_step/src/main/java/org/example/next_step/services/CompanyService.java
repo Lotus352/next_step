@@ -11,23 +11,15 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Business logic for Company entity.
- */
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
-
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_SIZE = 10;
-
     private final CompanyRepository companyRepo;
     private final IndustryRepository industryRepo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<CompanyResponse> findAll(int page, int size) {
@@ -37,17 +29,13 @@ public class CompanyService {
 
     @Transactional(readOnly = true)
     public Set<CompanyResponse> findFeatured(int size) {
-        Pageable pageable = createPageRequest(DEFAULT_PAGE, size);
-        return companyRepo.findByIsFeaturedTrueAndIsDeletedFalse(pageable)
-                .stream()
-                .map(CompanyMapper::toDTO)
-                .collect(Collectors.toSet());
+        Pageable pageable = createPageRequest(0, size);
+        return companyRepo.findByIsFeaturedTrueAndIsDeletedFalse(pageable).stream().map(CompanyMapper::toDTO).collect(Collectors.toSet());
     }
 
     @Transactional(readOnly = true)
     public CompanyResponse findById(Long id) {
-        Company company = companyRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+        Company company = companyRepo.findById(id).orElseThrow(() -> new RuntimeException("Company not found"));
         return CompanyMapper.toDTO(company);
     }
 
@@ -62,25 +50,29 @@ public class CompanyService {
     @Transactional
     public CompanyResponse update(Long id, CompanyRequest request) {
         Company existing = companyRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + id));
+
         CompanyMapper.updateEntity(existing, request, industryRepo);
         return CompanyMapper.toDTO(companyRepo.save(existing));
     }
 
     @Transactional
-    public void softDelete(Long id) {
+    public void delete(Long id) {
         Company company = companyRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Company not found with id: " + id));
+
+        if (company.getIsDeleted()) {
+            throw new IllegalStateException("Company is already deleted");
+        }
+
         company.setIsDeleted(true);
+        company.setUpdatedAt(LocalDateTime.now());
         companyRepo.save(company);
     }
 
     /* ---------- helper ---------- */
 
     private Pageable createPageRequest(int page, int size) {
-        return PageRequest.of(Math.max(page, 0),
-                Math.max(size, 1),
-                Sort.Direction.DESC,
-                "createdAt");
+        return PageRequest.of(Math.max(page, 0), Math.max(size, 1), Sort.Direction.DESC, "createdAt");
     }
 }

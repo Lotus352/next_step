@@ -10,10 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST controller for Certification entity.
- * Mirrors SkillController style for full consistency.
- */
 @RestController
 @RequestMapping(path = "/api/certifications", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,11 +17,6 @@ public class CertificationController {
 
     private final CertificationService service;
 
-    /* ──────────────────────── QUERY ──────────────────────── */
-
-    /**
-     * Paginated list of certifications.
-     */
     @GetMapping
     public ResponseEntity<Page<CertificationResponse>> list(
             @RequestParam(defaultValue = "0") int page,
@@ -34,41 +25,27 @@ public class CertificationController {
         return ResponseEntity.ok(service.getAll(page, size));
     }
 
-    /**
-     * Single certification by id.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<CertificationResponse> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
-    /* ─────────────────────── COMMAND ─────────────────────── */
+    /* ---------- commands ---------- */
 
-    /**
-     * Create new certification.
-     */
     @PostMapping
     public ResponseEntity<CertificationResponse> create(
             @RequestBody @Valid CertificationRequest request) {
-
         CertificationResponse body = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
-    /**
-     * Update existing certification.
-     */
     @PutMapping("/{id}")
     public ResponseEntity<CertificationResponse> update(
             @PathVariable Long id,
             @RequestBody @Valid CertificationRequest request) {
-
         return ResponseEntity.ok(service.update(id, request));
     }
 
-    /**
-     * Delete certification.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

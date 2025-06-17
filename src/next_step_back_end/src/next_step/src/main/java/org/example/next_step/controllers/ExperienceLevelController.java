@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for ExperienceLevel entity.
- */
 @RestController
 @RequestMapping(path = "/api/experience-levels", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class ExperienceLevelController {
 
     private final ExperienceLevelService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<ExperienceLevelResponse>> findAll(

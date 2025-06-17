@@ -10,3 +10,12 @@ export default interface NotificationType {
     createdAt: string;
     readAt: string | null;
 }
+
+export interface NotificationRequest {
+    userId: number;
+    jobId: number;
+    message: string | null;
+    status: string | "UNREAD";
+    createdAt: string;
+    readAt: string | null;
+}

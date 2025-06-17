@@ -10,16 +10,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for ExperienceLevel entity.
- */
 @Service
 @RequiredArgsConstructor
 public class ExperienceLevelService {
 
     private final ExperienceLevelRepository repo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<ExperienceLevelResponse> findAll(int page, int size) {

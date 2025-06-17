@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST endpoints for JobSalary entity.
- */
 @RestController
 @RequestMapping(path = "/api/job-salaries", produces = "application/json")
 @RequiredArgsConstructor
@@ -24,8 +21,6 @@ import java.util.List;
 public class JobSalaryController {
 
     private final JobSalaryService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<JobSalaryResponse>> findAll(

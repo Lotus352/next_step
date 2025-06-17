@@ -4,7 +4,17 @@ import {useSelector} from "react-redux"
 import {motion} from "framer-motion"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
-import {User, Mail, Phone, Calendar, GraduationCap, Briefcase, Flag, Building2} from "lucide-react"
+import {
+    User,
+    Mail,
+    Phone,
+    GraduationCap,
+    Briefcase,
+    Flag,
+    Building2,
+    BookUser,
+    UserRoundCog
+} from "lucide-react"
 import type {RootState} from "@/store/store"
 
 export default function ProfileInformation() {
@@ -37,8 +47,8 @@ export default function ProfileInformation() {
                         <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="p-1.5 rounded-lg bg-primary/10">
-                                    <User
-                                        className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-12"/>
+                                    <BookUser
+                                        className="h-4 w-4 text-primary transition-all duration-300"/>
                                 </div>
                                 <span className="text-xl font-bold text-foreground">Basic Details</span>
                                 <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>
@@ -106,7 +116,7 @@ export default function ProfileInformation() {
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="p-1.5 rounded-lg bg-primary/10">
                                     <Briefcase
-                                        className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-12"/>
+                                        className="h-4 w-4 text-primary transition-all duration-300"/>
                                 </div>
                                 <span className="text-xl font-bold text-foreground">Professional Details</span>
                                 <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>
@@ -160,7 +170,7 @@ export default function ProfileInformation() {
 
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 bg-primary/10 rounded-lg mt-0.5">
-                                                <Calendar className="h-4 w-4 text-primary"/>
+                                                <UserRoundCog className="h-4 w-4 text-primary"/>
                                             </div>
                                             <div>
                                                 <div className="text-sm text-muted-foreground font-medium">Account

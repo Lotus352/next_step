@@ -53,9 +53,6 @@ export default function JobDetailPage() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-8"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4 shadow-sm border border-primary/20">
-            <span className="text-sm font-semibold">Job Details</span>
-          </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
               Job

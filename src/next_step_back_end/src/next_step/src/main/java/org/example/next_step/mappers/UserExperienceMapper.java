@@ -1,5 +1,6 @@
 package org.example.next_step.mappers;
 
+import org.example.next_step.dtos.requests.UserExperienceRequest;
 import org.example.next_step.dtos.responses.UserExperienceResponse;
 import org.example.next_step.models.UserExperience;
 
@@ -24,7 +25,7 @@ public class UserExperienceMapper {
                 .build();
     }
 
-    public static UserExperience toEntity(UserExperienceResponse dto) {
+    public static UserExperience toEntity(UserExperienceRequest dto) {
         if (dto == null) {
             return null;
         }

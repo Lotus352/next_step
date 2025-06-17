@@ -30,6 +30,8 @@ interface JobsState extends PageResp {
         filtering: "idle" | "loading" | "failed" | "succeeded";
         fetchingById: "idle" | "loading" | "failed" | "succeeded";
         adding: "idle" | "loading" | "failed" | "succeeded";
+        updating: "idle" | "loading" | "failed" | "succeeded";
+        deleting: "idle" | "loading" | "failed" | "succeeded";
         fetchingFeatured: "idle" | "loading" | "failed" | "succeeded";
         fetchingEmploymentTypes: "idle" | "loading" | "failed" | "succeeded";
         fetchingSalaryRange: "idle" | "loading" | "failed" | "succeeded";
@@ -59,6 +61,8 @@ const initialState: JobsState = {
         filtering: "idle",
         fetchingById: "idle",
         adding: "idle",
+        updating: "idle",
+        deleting: "idle",
         fetchingFeatured: "idle",
         fetchingEmploymentTypes: "idle",
         fetchingSalaryRange: "idle",
@@ -116,10 +120,26 @@ export const filterJobs = createAsyncThunk<
 });
 
 export const addJob = createAsyncThunk<
-    void,
+    JobType,
     JobRequest
 >("jobs/addJob", async (jobData) => {
-    await axiosClient.post("/api/jobs", jobData);
+    const {data} = await axiosClient.post("/api/jobs", jobData);
+    return data;
+});
+
+export const updateJob = createAsyncThunk<
+    JobType,
+    { id: number; jobData: JobRequest }
+>("jobs/updateJob", async ({id, jobData}) => {
+    const {data} = await axiosClient.put(`/api/jobs/${id}`, jobData);
+    return data;
+});
+
+export const deleteJob = createAsyncThunk<
+    void,
+    { id: number }
+>("jobs/deleteJob", async ({id}) => {
+    await axiosClient.delete(`/api/jobs/${id}`);
 });
 
 export const toggleFavoriteJob = createAsyncThunk<
@@ -228,12 +248,58 @@ const jobsSlice = createSlice({
             .addCase(addJob.pending, (s) => {
                 s.statuses.adding = "loading";
             })
-            .addCase(addJob.fulfilled, (s) => {
+            .addCase(addJob.fulfilled, (s, a) => {
                 s.statuses.adding = "succeeded";
+                // Optionally add the new job to the content array
+                s.content.unshift(a.payload);
+                s.totalElements += 1;
             })
             .addCase(addJob.rejected, (s) => {
                 s.statuses.adding = "failed";
                 s.error = "Failed to add job";
+            })
+
+            /* Update Job */
+            .addCase(updateJob.pending, (s) => {
+                s.statuses.updating = "loading";
+            })
+            .addCase(updateJob.fulfilled, (s, a) => {
+                s.statuses.updating = "succeeded";
+                // Update the job in content array if it exists
+                const jobIndex = s.content.findIndex(job => job.jobId === a.payload.jobId);
+                if (jobIndex !== -1) {
+                    s.content[jobIndex] = a.payload;
+                }
+                // Update selected job if it's the same
+                if (s.selected && s.selected.jobId === a.payload.jobId) {
+                    s.selected = a.payload;
+                }
+            })
+            .addCase(updateJob.rejected, (s) => {
+                s.statuses.updating = "failed";
+                s.error = "Failed to update job";
+            })
+
+            /* Delete Job */
+            .addCase(deleteJob.pending, (s) => {
+                s.statuses.deleting = "loading";
+            })
+            .addCase(deleteJob.fulfilled, (s, a) => {
+                s.statuses.deleting = "succeeded";
+                const jobId = a.meta.arg.id;
+                // Remove job from content array
+                s.content = s.content.filter(job => job.jobId !== jobId);
+                s.totalElements = Math.max(0, s.totalElements - 1);
+                // Clear selected job if it's the deleted one
+                if (s.selected && s.selected.jobId === jobId) {
+                    s.selected = null;
+                }
+                // Remove from featured if exists
+                s.featured = s.featured.filter(job => job.jobId !== jobId);
+            })
+            .addCase(deleteJob.rejected, (s) => {
+                s.statuses.deleting = "failed";
+                s.error = "Failed to delete job";
             })
 
             /* Toggle Favorite */
@@ -242,9 +308,24 @@ const jobsSlice = createSlice({
             })
             .addCase(toggleFavoriteJob.fulfilled, (s, a) => {
                 s.statuses.togglingFavorite = "succeeded";
+                const jobId = a.meta.arg.id;
+
+                // Update featured jobs
                 s.featured = s.featured.map((job) =>
-                    job.jobId === a.meta.arg.id ? {...job, isFavorite: !job.isFavorite} : job
+                    job.jobId === jobId ? {...job, isFavorite: !job.isFavorite} : job
                 );
+
+                // Update content jobs if they have favorite property
+                s.content = s.content.map((job) =>
+                    job.jobId === jobId && 'isFavorite' in job
+                        ? {...job, isFavorite: !(job as any).isFavorite}
+                        : job
+                );
+
+                // Update selected job if it has favorite property
+                if (s.selected && s.selected.jobId === jobId && 'isFavorite' in s.selected) {
+                    s.selected = {...s.selected, isFavorite: !(s.selected as any).isFavorite};
+                }
             })
             .addCase(toggleFavoriteJob.rejected, (s) => {
                 s.statuses.togglingFavorite = "failed";
@@ -269,5 +350,16 @@ const jobsSlice = createSlice({
     },
 });
 
-export const {clearJobSelected, clearJobRequest, clearJobError, setJobFilter, resetJobFilter, clearJobs, updateJobRequest, clearFeaturedJobs, initializeJobRequest} = jobsSlice.actions;
+export const {
+    clearJobSelected,
+    clearJobRequest,
+    clearJobError,
+    setJobFilter,
+    resetJobFilter,
+    clearJobs,
+    updateJobRequest,
+    clearFeaturedJobs,
+    initializeJobRequest
+} = jobsSlice.actions;
+
 export default jobsSlice.reducer;

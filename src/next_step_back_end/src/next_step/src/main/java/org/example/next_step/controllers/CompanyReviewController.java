@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for CompanyReview entity.
- */
 @RestController
 @RequestMapping(path = "/api/company-reviews", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyReviewController {
 
     private final CompanyReviewService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<CompanyReviewResponse>> getAllReviews(
@@ -52,23 +47,23 @@ public class CompanyReviewController {
     /* ---------- commands ---------- */
 
     @PostMapping
-    public ResponseEntity<CompanyReviewResponse> createReview(
+    public ResponseEntity<CompanyReviewResponse> create(
             @RequestBody @Valid CompanyReviewRequest request) {
-        CompanyReviewResponse body = service.createReview(request);
+        CompanyReviewResponse body = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyReviewResponse> updateReview(
+    public ResponseEntity<CompanyReviewResponse> update(
             @PathVariable Long id,
             @RequestBody @Valid CompanyReviewRequest request) {
 
-        return ResponseEntity.ok(service.updateReview(id, request));
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
-        service.deleteReview(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

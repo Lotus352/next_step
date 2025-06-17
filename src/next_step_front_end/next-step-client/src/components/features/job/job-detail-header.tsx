@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Heart,
   Briefcase,
@@ -18,79 +24,95 @@ import {
   Sparkles,
   BookmarkPlus,
   Bookmark,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useState, useEffect } from "react"
-import { formatDistanceToNow } from "date-fns"
-import { motion } from "framer-motion"
-import { formatTextEnum } from "@/lib/utils"
-import type { RootState, AppDispatch } from "@/store/store"
-import { useSelector, useDispatch } from "react-redux"
-import { toggleFavoriteJob } from "@/store/slices/jobs-slice"
-import {FavoriteNotification, NotificationState} from "@/components/notifications/favorite-notification.tsx"
-import { useNavigate } from "react-router-dom"
-import DestructiveAlert from "@/components/destructive-alert"
-import { Separator } from "@/components/ui/separator"
-
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useState, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
+import { formatTextEnum } from "@/lib/utils";
+import type { RootState, AppDispatch } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFavoriteJob } from "@/store/slices/jobs-slice";
+import {
+  FavoriteNotification,
+  NotificationState,
+} from "@/components/notifications/favorite-notification.tsx";
+import { useNavigate } from "react-router-dom";
+import DestructiveAlert from "@/components/destructive-alert";
+import { Separator } from "@/components/ui/separator";
 
 export default function JobDetailHeader() {
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
-  const [applied, setApplied] = useState(false)
-  const [favoriteAnimation, setFavoriteAnimation] = useState(false)
-  const [localFavoriteState, setLocalFavoriteState] = useState(false)
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const [applied, setApplied] = useState(false);
+  const [favoriteAnimation, setFavoriteAnimation] = useState(false);
+  const [localFavoriteState, setLocalFavoriteState] = useState(false);
   const [notification, setNotification] = useState<NotificationState>({
     isVisible: false,
     jobTitle: "",
     type: "added",
-  })
+  });
 
-  const { selected } = useSelector((state: RootState) => state.jobs)
-  const isAuthenticated = useSelector((state: RootState) => state.auth.status === "authenticated")
+  const { selected } = useSelector((state: RootState) => state.jobs);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.status === "authenticated",
+  );
 
   const handleFavoriteToggle = async () => {
-    if (!selected) return
+    if (!selected) return;
 
     if (isAuthenticated) {
-      const wasFavorite = localFavoriteState
+      const wasFavorite = localFavoriteState;
 
-      setLocalFavoriteState(!wasFavorite)
+      setLocalFavoriteState(!wasFavorite);
 
-      setFavoriteAnimation(true)
-      setTimeout(() => setFavoriteAnimation(false), 1000)
+      setFavoriteAnimation(true);
+      setTimeout(() => setFavoriteAnimation(false), 1000);
 
       try {
-        await dispatch(toggleFavoriteJob({ id: selected.jobId }))
+        await dispatch(toggleFavoriteJob({ id: selected.jobId }));
 
         setNotification({
           isVisible: true,
           jobTitle: selected.title,
           type: wasFavorite ? "removed" : "added",
-        })
+        });
       } catch (error) {
-        setLocalFavoriteState(wasFavorite)
-        console.error("Failed to toggle favorite:", error)
+        setLocalFavoriteState(wasFavorite);
+        console.error("Failed to toggle favorite:", error);
       }
     } else {
-      navigate("/sign-in")
+      navigate("/sign-in");
     }
-  }
+  };
 
   const closeNotification = () => {
-    setNotification((prev) => ({ ...prev, isVisible: false }))
-  }
+    setNotification((prev) => ({ ...prev, isVisible: false }));
+  };
 
   const handleApply = () => {
-    setApplied(true)
-  }
+    setApplied(true);
+  };
+
+  const handleSocialShare = () => {
+    const currentUrl = window.location.href;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+
+    window.open(facebookShareUrl, "_blank", "noopener,noreferrer,width=600,height=400");
+  };
 
   useEffect(() => {
     if (selected) {
-      setLocalFavoriteState(selected.isFavorite || false)
+      setLocalFavoriteState(selected.isFavorite || false);
     }
-  }, [selected?.isFavorite, selected])
+  }, [selected?.isFavorite, selected]);
 
   return !selected ? (
     <DestructiveAlert message="No job selected" />
@@ -122,7 +144,9 @@ export default function JobDetailHeader() {
                       className="object-cover transition-all duration-300 group-hover:brightness-110"
                     />
                     <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xl rounded-xl transition-all duration-300 group-hover:bg-primary/90">
-                      {selected.postedBy.company.name.substring(0, 2).toUpperCase()}
+                      {selected.postedBy.company.name
+                        .substring(0, 2)
+                        .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
 
@@ -147,7 +171,8 @@ export default function JobDetailHeader() {
                       <div className="flex items-center text-muted-foreground transition-all duration-300 hover:text-foreground group-hover:translate-x-1">
                         <MapPin className="h-4 w-4 mr-2 transition-all duration-300 group-hover:text-primary" />
                         <span className="text-sm font-medium">
-                          {selected.location.city}, {selected.location.countryName}
+                          {selected.location.city},{" "}
+                          {selected.location.countryName}
                         </span>
                       </div>
                     )}
@@ -181,7 +206,11 @@ export default function JobDetailHeader() {
                         className="bg-popover border border-border shadow-lg"
                         sideOffset={8}
                       >
-                        <p>{localFavoriteState ? "Remove from favorites" : "Add to favorites"}</p>
+                        <p>
+                          {localFavoriteState
+                            ? "Remove from favorites"
+                            : "Add to favorites"}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -211,7 +240,8 @@ export default function JobDetailHeader() {
                     <div className="flex items-center bg-secondary border px-4 py-3 rounded-full transition-all duration-300 hover:bg-accent hover:scale-105 hover:shadow-sm">
                       <Coins className="h-4 w-4 mr-2 text-foreground transition-all duration-300 hover:text-primary" />
                       <span className="text-sm font-semibold text-secondary-foreground">
-                        {selected.salary.minSalary} - {selected.salary.maxSalary} {selected.salary.currency}
+                        {selected.salary.minSalary} -{" "}
+                        {selected.salary.maxSalary} {selected.salary.currency}
                       </span>
                       <span className="text-xs text-muted-foreground mx-1 font-medium">
                         ({selected.salary.payPeriod})
@@ -265,7 +295,9 @@ export default function JobDetailHeader() {
                   <div className="p-1.5 rounded-lg bg-primary/10">
                     <Sparkles className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-180" />
                   </div>
-                  <span className="text-sm font-bold text-foreground">Required Skills</span>
+                  <span className="text-sm font-bold text-foreground">
+                    Required Skills
+                  </span>
                   <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent" />
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -319,12 +351,12 @@ export default function JobDetailHeader() {
                 </>
               )}
             </Button>
-
             <div className="flex gap-3">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
+                      onClick={() => handleSocialShare()}
                       variant="outline"
                       size="icon"
                       className="h-12 w-12 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-110 border-border/50"
@@ -332,7 +364,11 @@ export default function JobDetailHeader() {
                       <Share2 className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="bg-popover border border-border shadow-lg" sideOffset={8}>
+                  <TooltipContent
+                    side="top"
+                    className="bg-popover border border-border shadow-lg"
+                    sideOffset={8}
+                  >
                     <p>Share this job</p>
                   </TooltipContent>
                 </Tooltip>
@@ -349,12 +385,15 @@ export default function JobDetailHeader() {
                       <ExternalLink className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="bg-popover border border-border shadow-lg" sideOffset={8}>
+                  <TooltipContent
+                    side="top"
+                    className="bg-popover border border-border shadow-lg"
+                    sideOffset={8}
+                  >
                     <p>View on company website</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
               <Button
                 variant="outline"
                 className="gap-2 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-105 px-6 border-border/50"
@@ -377,5 +416,5 @@ export default function JobDetailHeader() {
         </Card>
       </motion.div>
     </>
-  )
+  );
 }

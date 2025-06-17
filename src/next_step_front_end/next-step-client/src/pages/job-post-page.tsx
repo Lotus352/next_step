@@ -8,7 +8,6 @@ import {
     Coins,
     GraduationCap,
     CheckCircle,
-    ChevronLeft,
     FileText,
     Sparkles,
 } from "lucide-react"
@@ -37,7 +36,6 @@ import Loading from "@/components/loading"
 import Header from "@/components/layout/header"
 import Footer from "@/components/layout/footer"
 import {motion} from "framer-motion"
-import {Badge} from "@/components/ui/badge"
 import TryAgain from "@/components/try-again.tsx";
 
 export default function JobPostPage() {
@@ -173,14 +171,6 @@ export default function JobPostPage() {
                     transition={{duration: 0.5}}
                     className="mb-8"
                 >
-                    <div className="flex items-center gap-2 mb-2">
-                        <Button variant="ghost" size="sm" className="rounded-full h-8 w-8 p-0"
-                                onClick={() => navigate(-1)}>
-                            <ChevronLeft className="h-4 w-4"/>
-                            <span className="sr-only">Back</span>
-                        </Button>
-                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">Employer</Badge>
-                    </div>
                     <h1 className="text-4xl font-bold text-foreground mb-3">Post a New Job</h1>
                     <p className="text-muted-foreground text-lg max-w-2xl">
                         Create a compelling job posting to attract qualified candidates for your company

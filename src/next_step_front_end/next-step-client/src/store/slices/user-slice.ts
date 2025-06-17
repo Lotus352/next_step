@@ -1,170 +1,331 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
-import axiosClient from "@/api/axios-client"
-import type SkillType from "@/types/skill-type"
-import UserType, {UserRequest} from "@/types/user-type.ts";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosClient from "@/api/axios-client";
+import UserType, { UserRequest } from "@/types/user-type.ts";
 
 /* ---------- State ---------- */
 interface UserState {
-    profile: UserType | null
-    statuses: {
-        fetching: "idle" | "loading" | "failed" | "succeeded"
-        updating: "idle" | "loading" | "failed" | "succeeded"
-        updatingSkills: "idle" | "loading" | "failed" | "succeeded"
-        uploadingAvatar: "idle" | "loading" | "failed" | "succeeded"
-        uploadingResume: "idle" | "loading" | "failed" | "succeeded"
-    }
-    error: string | null
+  profile: UserType | null;
+  statuses: {
+    fetching: "idle" | "loading" | "failed" | "succeeded";
+    fetchingByEmail: "idle" | "loading" | "failed" | "succeeded";
+    updating: "idle" | "loading" | "failed" | "succeeded";
+    updatingSkills: "idle" | "loading" | "failed" | "succeeded";
+    uploadingAvatar: "idle" | "loading" | "failed" | "succeeded";
+    uploadingResume: "idle" | "loading" | "failed" | "succeeded";
+    deleting: "idle" | "loading" | "failed" | "succeeded";
+    checkingUsername: "idle" | "loading" | "failed" | "succeeded";
+    checkingEmail: "idle" | "loading" | "failed" | "succeeded";
+    changingPassword: "idle" | "loading" | "failed" | "succeeded";
+  };
+  error: string | null;
+  usernameExists: boolean | null;
+  emailExists: boolean | null;
 }
 
 const initialState: UserState = {
-    profile: null,
-    statuses: {
+  profile: null,
+  statuses: {
+    fetching: "idle",
+    fetchingByEmail: "idle",
+    updating: "idle",
+    updatingSkills: "idle",
+    uploadingAvatar: "idle",
+    uploadingResume: "idle",
+    deleting: "idle",
+    checkingUsername: "idle",
+    checkingEmail: "idle",
+    changingPassword: "idle",
+  },
+  error: null,
+  usernameExists: null,
+  emailExists: null,
+};
+
+/* ---------- Thunks ---------- */
+export const fetchUserProfile = createAsyncThunk<UserType, string>(
+  "user/profile",
+  async (username) => {
+    const { data } = await axiosClient.get(`/api/user/${username}`);
+    return data;
+  },
+);
+
+export const fetchUserByEmail = createAsyncThunk<UserType, string>(
+  "user/fetchByEmail",
+  async (email) => {
+    const { data } = await axiosClient.get(`/api/user/email/${email}`);
+    return data;
+  },
+);
+
+export const updateUserProfile = createAsyncThunk<
+  UserType,
+  { id: number; profile: UserRequest }
+>("user/updateProfile", async ({ id, profile }) => {
+  const { data } = await axiosClient.put(`/api/user/profile/${id}`, profile);
+  return data;
+});
+
+export const updateUserSkills = createAsyncThunk<
+  UserType,
+  { id: number; skillIds: number[] }
+>("user/updateSkills", async ({ id, skillIds }) => {
+  const { data } = await axiosClient.put(`/api/user/${id}/skills`, skillIds);
+  return data;
+});
+
+export const uploadAvatar = createAsyncThunk<
+  string,
+  { id: number; file: File }
+>("user/uploadAvatar", async ({ id, file }) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await axiosClient.post(`/api/user/${id}/avatar`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+});
+
+export const uploadResume = createAsyncThunk<
+  string,
+  { id: number; file: File }
+>("user/uploadResume", async ({ id, file }) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await axiosClient.post(`/api/user/${id}/resume`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return data;
+});
+
+export const deleteUser = createAsyncThunk<void, number>(
+  "user/delete",
+  async (id) => {
+    await axiosClient.delete(`/api/user/${id}`);
+  },
+);
+
+export const checkUsernameExists = createAsyncThunk<boolean, string>(
+  "user/checkUsername",
+  async (username) => {
+    const { data } = await axiosClient.get(
+      `/api/user/exists/username/${username}`,
+    );
+    return data;
+  },
+);
+
+export const checkEmailExists = createAsyncThunk<boolean, string>(
+  "user/checkEmail",
+  async (email) => {
+    const { data } = await axiosClient.get(`/api/user/exists/email/${email}`);
+    return data;
+  },
+);
+
+export const changePassword = createAsyncThunk<
+  string,
+  {
+    id: number;
+    changePasswordRequest: {
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    };
+  }
+>("user/changePassword", async ({ id, changePasswordRequest }) => {
+  const { data } = await axiosClient.put(
+    `/api/user/${id}/change-password`,
+    changePasswordRequest,
+  );
+  return data;
+});
+
+/* ---------- Slice ---------- */
+const userProfileSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    clearProfile: (state) => {
+      state.profile = null;
+      state.statuses = {
         fetching: "idle",
+        fetchingByEmail: "idle",
         updating: "idle",
         updatingSkills: "idle",
         uploadingAvatar: "idle",
         uploadingResume: "idle",
+        deleting: "idle",
+        checkingUsername: "idle",
+        checkingEmail: "idle",
+        changingPassword: "idle",
+      };
+      state.error = null;
     },
-    error: null,
-}
-
-/* ---------- Thunks ---------- */
-export const fetchUserProfile = createAsyncThunk<UserType, string>("user/profile", async (username) => {
-    const {data} = await axiosClient.get(`/api/user/${username}`)
-    return data
-})
-
-export const updateUserProfile = createAsyncThunk<UserType, UserRequest>(
-    "user/updateProfile",
-    async (profile, id) => {
-        const {data} = await axiosClient.put(`/api/user/profile/${id}`, profile)
-        return data
+    clearError: (state) => {
+      state.error = null;
     },
-)
-
-export const updateUserSkills = createAsyncThunk<SkillType[], { id: number; skillIds: number[] }>(
-    "user/updateSkills",
-    async ({id, skillIds}) => {
-        const {data} = await axiosClient.put(`/api/user/${id}/skills`, skillIds)
-        return data
+    resetStatuses: (state) => {
+      Object.keys(state.statuses).forEach((key) => {
+        state.statuses[key as keyof typeof state.statuses] = "idle";
+      });
     },
-)
-
-export const uploadAvatar = createAsyncThunk<string, { id: number; file: File }>(
-    "user/uploadAvatar",
-    async ({id, file}) => {
-        const formData = new FormData()
-        formData.append("file", file)
-
-        const {data} = await axiosClient.post(`/api/user/${id}/avatar`, formData, {
-            headers: {"Content-Type": "multipart/form-data"},
-        })
-        return data
+    clearExistsChecks: (state) => {
+      state.usernameExists = null;
+      state.emailExists = null;
     },
-)
+  },
+  extraReducers: (builder) => {
+    builder
+      /* Fetch Profile by Username */
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.statuses.fetching = "loading";
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.statuses.fetching = "succeeded";
+        state.profile = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state) => {
+        state.statuses.fetching = "failed";
+        state.error = "Failed to fetch user profile";
+      })
 
-export const uploadResume = createAsyncThunk<string, { id: number; file: File }>(
-    "user/uploadResume",
-    async ({id, file}) => {
-        const formData = new FormData()
-        formData.append("file", file)
+      /* Fetch Profile by Email */
+      .addCase(fetchUserByEmail.pending, (state) => {
+        state.statuses.fetchingByEmail = "loading";
+        state.error = null;
+      })
+      .addCase(fetchUserByEmail.fulfilled, (state, action) => {
+        state.statuses.fetchingByEmail = "succeeded";
+        state.profile = action.payload;
+      })
+      .addCase(fetchUserByEmail.rejected, (state) => {
+        state.statuses.fetchingByEmail = "failed";
+        state.error = "Failed to fetch user profile by email";
+      })
 
-        const {data} = await axiosClient.post(`/api/user/${id}/resume`, formData, {
-            headers: {"Content-Type": "multipart/form-data"},
-        })
+      /* Update Profile */
+      .addCase(updateUserProfile.pending, (state) => {
+        state.statuses.updating = "loading";
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.statuses.updating = "succeeded";
+        state.profile = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state) => {
+        state.statuses.updating = "failed";
+        state.error = "Failed to update user profile";
+      })
 
-        return data
-    },
-)
+      /* Update Skills */
+      .addCase(updateUserSkills.pending, (state) => {
+        state.statuses.updatingSkills = "loading";
+        state.error = null;
+      })
+      .addCase(updateUserSkills.fulfilled, (state, action) => {
+        state.statuses.updatingSkills = "succeeded";
+        if (state.profile) {
+          state.profile.skills = action.payload.skills;
+        }
+      })
+      .addCase(updateUserSkills.rejected, (state) => {
+        state.statuses.updatingSkills = "failed";
+        state.error = "Failed to update user skills";
+      })
 
-/* ---------- Slice ---------- */
-const userProfileSlice = createSlice({
-    name: "userProfile",
-    initialState,
-    reducers: {
-        clearProfile: () => initialState,
-        clearError: (state) => {
-            state.error = null
-        },
-        resetStatuses: (state) => {
-            Object.keys(state.statuses).forEach((key) => {
-                state.statuses[key as keyof typeof state.statuses] = "idle"
-            })
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            /* Fetch Profile */
-            .addCase(fetchUserProfile.pending, (state) => {
-                state.statuses.fetching = "loading"
-                state.error = null
-            })
-            .addCase(fetchUserProfile.fulfilled, (state, action) => {
-                state.statuses.fetching = "succeeded"
-                state.profile = action.payload
-            })
-            .addCase(fetchUserProfile.rejected, (state) => {
-                state.statuses.fetching = "failed"
-                state.error = "Failed to fetch user profile"
-            })
+      /* Upload Avatar */
+      .addCase(uploadAvatar.pending, (state) => {
+        state.statuses.uploadingAvatar = "loading";
+        state.error = null;
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.statuses.uploadingAvatar = "succeeded";
+        if (state.profile) {
+          state.profile.avatarUrl = action.payload;
+        }
+      })
+      .addCase(uploadAvatar.rejected, (state) => {
+        state.statuses.uploadingAvatar = "failed";
+        state.error = "Failed to upload avatar";
+      })
 
-            /* Update Profile */
-            .addCase(updateUserProfile.pending, (state) => {
-                state.statuses.updating = "loading"
-                state.error = null
-            })
-            .addCase(updateUserProfile.fulfilled, (state, action) => {
-                state.statuses.updating = "succeeded"
-                state.profile = action.payload
-            })
-            .addCase(updateUserProfile.rejected, (state) => {
-                state.statuses.updating = "failed"
-                state.error = "Failed to update user profile"
-            })
+      /* Upload Resume */
+      .addCase(uploadResume.pending, (state) => {
+        state.statuses.uploadingResume = "loading";
+        state.error = null;
+      })
+      .addCase(uploadResume.fulfilled, (state, action) => {
+        state.statuses.uploadingResume = "succeeded";
+        if (state.profile) {
+          state.profile.resumeUrl = action.payload;
+        }
+      })
+      .addCase(uploadResume.rejected, (state) => {
+        state.statuses.uploadingResume = "failed";
+        state.error = "Failed to upload resume";
+      })
 
-            /* Update Skills */
-            .addCase(updateUserSkills.pending, (state) => {
-                state.statuses.updatingSkills = "loading"
-                state.error = null
-            })
-            .addCase(updateUserSkills.fulfilled, (state) => {
-                state.statuses.updatingSkills = "succeeded"
-            })
-            .addCase(updateUserSkills.rejected, (state) => {
-                state.statuses.updatingSkills = "failed"
-                state.error = "Failed to update user skills"
-            })
+      /* Delete User */
+      .addCase(deleteUser.pending, (state) => {
+        state.statuses.deleting = "loading";
+        state.error = null;
+      })
+      .addCase(deleteUser.fulfilled, (state) => {
+        state.statuses.deleting = "succeeded";
+        state.profile = null;
+      })
+      .addCase(deleteUser.rejected, (state) => {
+        state.statuses.deleting = "failed";
+        state.error = "Failed to delete user";
+      })
 
-            /* Upload Avatar */
-            .addCase(uploadAvatar.pending, (state) => {
-                state.statuses.uploadingAvatar = "loading"
-                state.error = null
-            })
-            .addCase(uploadAvatar.fulfilled, (state) => {
-                state.statuses.uploadingAvatar = "succeeded"
-            })
-            .addCase(uploadAvatar.rejected, (state) => {
-                state.statuses.uploadingAvatar = "failed"
-                state.error = "Failed to upload avatar"
-            })
+      /* Check Username Exists */
+      .addCase(checkUsernameExists.pending, (state) => {
+        state.statuses.checkingUsername = "loading";
+        state.error = null;
+      })
+      .addCase(checkUsernameExists.fulfilled, (state, action) => {
+        state.statuses.checkingUsername = "succeeded";
+        state.usernameExists = action.payload;
+      })
+      .addCase(checkUsernameExists.rejected, (state) => {
+        state.statuses.checkingUsername = "failed";
+        state.error = "Failed to check username availability";
+      })
 
-            /* Upload Resume */
-            .addCase(uploadResume.pending, (state) => {
-                state.statuses.uploadingResume = "loading"
-                state.error = null
-            })
-            .addCase(uploadResume.fulfilled, (state, action) => {
-                state.statuses.uploadingResume = "succeeded"
-                if (state.profile) {
-                    state.profile.resumeUrl = action.payload
-                }
-            })
-            .addCase(uploadResume.rejected, (state) => {
-                state.statuses.uploadingResume = "failed"
-                state.error = "Failed to upload resume"
-            })
-    },
-})
+      /* Check Email Exists */
+      .addCase(checkEmailExists.pending, (state) => {
+        state.statuses.checkingEmail = "loading";
+        state.error = null;
+      })
+      .addCase(checkEmailExists.fulfilled, (state, action) => {
+        state.statuses.checkingEmail = "succeeded";
+        state.emailExists = action.payload;
+      })
+      .addCase(checkEmailExists.rejected, (state) => {
+        state.statuses.checkingEmail = "failed";
+        state.error = "Failed to check email availability";
+      })
 
-export const {clearProfile, clearError, resetStatuses} = userProfileSlice.actions
-export default userProfileSlice.reducer
+      /* Change Password */
+      .addCase(changePassword.pending, (state) => {
+        state.statuses.changingPassword = "loading";
+        state.error = null;
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.statuses.changingPassword = "succeeded";
+      })
+      .addCase(changePassword.rejected, (state) => {
+        state.statuses.changingPassword = "failed";
+        state.error = "Failed to change password";
+      });
+  },
+});
+
+export const { clearProfile, clearError, resetStatuses, clearExistsChecks } = userProfileSlice.actions;
+export default userProfileSlice.reducer;
