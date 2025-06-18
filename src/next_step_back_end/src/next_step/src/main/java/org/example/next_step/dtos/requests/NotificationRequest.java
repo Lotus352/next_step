@@ -14,6 +14,5 @@ public class NotificationRequest {
     private Long jobId;
     private String message;
     private String status;
-    private LocalDateTime createdAt;
     private LocalDateTime readAt;
 }

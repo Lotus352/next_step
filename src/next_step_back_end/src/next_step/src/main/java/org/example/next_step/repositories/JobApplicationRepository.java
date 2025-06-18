@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -27,4 +28,13 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
         @Param("status") ApplicationStatus status, 
         @Param("keyword") String keyword,
         Pageable pageable);
+
+    @Query("SELECT CASE WHEN COUNT(ja) > 0 THEN TRUE ELSE FALSE END " +
+            "FROM JobApplication ja " +
+            "WHERE ja.user.username = :username AND ja.job.jobId = :jobId")
+    boolean hasApplied(@Param("username") String username, @Param("jobId") Long jobId);
+
+    @Query("SELECT ja FROM JobApplication ja WHERE ja.user.username = :username AND ja.job.jobId = :jobId")
+    Optional<JobApplication> findApplication(@Param("username") String username, @Param("jobId") Long jobId);
+
 }

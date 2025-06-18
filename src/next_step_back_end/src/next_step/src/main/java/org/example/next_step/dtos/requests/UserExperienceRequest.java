@@ -1,7 +1,9 @@
 package org.example.next_step.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
+import org.example.next_step.configurations.FlexibleDateTimeDeserializer;
 import org.example.next_step.dtos.responses.ExperienceLevelResponse;
 
 import java.time.LocalDateTime;
@@ -17,10 +19,12 @@ public class UserExperienceRequest {
     private String title;
     private String company;
     private String location;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonDeserialize(using = FlexibleDateTimeDeserializer.class)
     private LocalDateTime startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonDeserialize(using = FlexibleDateTimeDeserializer.class)
     private LocalDateTime endDate;
+
     private String description;
-    private ExperienceLevelResponse experienceLevel;
 }

@@ -15,7 +15,7 @@ import {formatDistanceToNow} from "date-fns"
 import {Separator} from "@/components/ui/separator"
 import type SkillType from "@/types/skill-type"
 import {useNavigate} from "react-router-dom"
-import {FavoriteNotification, NotificationState} from "@/components/notifications/favorite-notification.tsx"
+import {FavoriteNotification, NotificationState} from "@/components/notification-state/favorite-notification.tsx"
 
 type JOB_FILTER_TYPES = "" | "FULL_TIME" | "PART_TIME" | "REMOTE"
 

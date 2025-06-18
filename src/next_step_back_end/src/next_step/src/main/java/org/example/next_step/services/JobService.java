@@ -19,11 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Business logic for the Job entity.
- * <p>
- * All repository calls correspond to real methods in their interfaces.
- */
 @Service
 @RequiredArgsConstructor
 public class JobService {
@@ -34,20 +29,14 @@ public class JobService {
     private final ExperienceLevelRepository experienceRepo;
     private final UserRepository userRepo;
 
-    /* ─────────────────────── QUERIES ─────────────────────── */
-
-    /**
-     * Returns the distinct set of employment‐type strings present in all jobs.
-     */
     @Transactional(readOnly = true)
     public Set<String> getEmploymentTypes() {
-        return jobRepo.findAll()                       // standard JPA call
+        return jobRepo.findAll()
                 .stream()
                 .map(Job::getEmploymentType)
                 .filter(StringUtils::hasText)
                 .collect(Collectors.toSet());
     }
-
 
     @Transactional(readOnly = true)
     public Set<JobFeaturedResponse> getFeaturedJobs(int size,
@@ -63,9 +52,6 @@ public class JobService {
                 .collect(Collectors.toSet());
     }
 
-    /**
-     * Fetch a single job by primary key.
-     */
     @Transactional(readOnly = true)
     public JobResponse findById(Long id, String username) {
         Job job = jobRepo.findById(id)
@@ -73,84 +59,59 @@ public class JobService {
         return JobMapper.toDTO(job, username);
     }
 
-    /**
-     * Advanced search using dynamic JPQL in {@code JobRepository#findJobsByFilter}.
-     */
     @Transactional(readOnly = true)
     public Page<JobResponse> filter(int page,
                                     int size,
                                     JobFilterRequest request,
                                     String username) {
 
-        if (request.getEmploymentType() != null && request.getEmploymentType().equals("all")) {
-            request.setEmploymentType(null);
-        }
-        if (request.getCity() != null && request.getCity().equals("all")) {
-            request.setCity(null);
-        }
-        if (request.getCountry() != null && request.getCountry().equals("all")) {
-            request.setCountry(null);
-        }
-
-        String candidateUsername = username;
-
-        if (username != null) {
-            User user = userRepo.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException(""));
-            Set<Role> roles = user.getRoles();
-            if (roles.stream().anyMatch(r -> r.getRoleName().equals("CANDIDATE"))) {
-                username = null;
-            }
-        }
+        normalizeAllFields(request);
 
         Pageable pageable = PageRequest.of(
                 page, size,
                 Sort.by(Sort.Direction.fromString(
-                                StringUtils.hasText(request.getSortDirection())
-                                        ? request.getSortDirection()
-                                        : "DESC"),
-                        StringUtils.hasText(request.getSortBy())
-                                ? request.getSortBy()
-                                : "createdAt"));
+                                StringUtils.hasText(request.getSortDirection()) ? request.getSortDirection() : "DESC"),
+                        StringUtils.hasText(request.getSortBy()) ? request.getSortBy() : "createdAt")
+        );
 
-        LocalDateTime createdAfter = null;
-        String datePosted = request.getDatePosted();
+        LocalDateTime createdAfter = resolveCreatedAfter(request.getDatePosted());
 
-        if (StringUtils.hasText(datePosted) && !"all".equalsIgnoreCase(datePosted)) {
-            switch (datePosted.toLowerCase()) {
-                case "day":
-                    createdAfter = LocalDateTime.now().minusDays(1);
-                    break;
-                case "week":
-                    createdAfter = LocalDateTime.now().minusWeeks(1);
-                    break;
-                case "month":
-                    createdAfter = LocalDateTime.now().minusMonths(1);
-                    break;
-            }
+        final String candidateUsername;
+        final String employerUsername;
+
+        if (StringUtils.hasText(username)) {
+            User user = userRepo.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Set<Role> roles = user.getRoles();
+            candidateUsername = roles.stream().anyMatch(r -> "CANDIDATE".equals(r.getRoleName())) ? user.getUsername() : null;
+            employerUsername = roles.stream().anyMatch(r -> "EMPLOYER".equals(r.getRoleName())) ? user.getUsername() : null;
+        } else {
+            candidateUsername = null;
+            employerUsername = null;
         }
 
+        // 5. Query job filter
         Page<Job> jobs = jobRepo.findJobsByFilter(
-                StringUtils.hasText(request.getCountry()) ? request.getCountry() : null,
-                StringUtils.hasText(request.getCity()) ? request.getCity() : null,
-                StringUtils.hasText(request.getEmploymentType()) ? request.getEmploymentType() : null,
+                request.getCountry(),
+                request.getCity(),
+                request.getEmploymentType(),
                 request.getSalaryRange() != null ? request.getSalaryRange().getMinSalary() : null,
                 request.getSalaryRange() != null ? request.getSalaryRange().getMaxSalary() : null,
-                request.getExperienceLevels() != null && !request.getExperienceLevels().isEmpty()
-                        ? request.getExperienceLevels() : null,
-                request.getSkills() != null && !request.getSkills().isEmpty()
-                        ? request.getSkills() : null,
+                (request.getExperienceLevels() != null && !request.getExperienceLevels().isEmpty()) ? request.getExperienceLevels() : null,
+                (request.getSkills() != null && !request.getSkills().isEmpty()) ? request.getSkills() : null,
                 createdAfter,
-                StringUtils.hasText(request.getKeyword()) ? request.getKeyword() : null,
-                StringUtils.hasText(request.getCurrency()) ? request.getCurrency() : null,
-                StringUtils.hasText(request.getPayPeriod()) ? request.getPayPeriod() : null,
-                username,
-                pageable);
+                request.getKeyword(),
+                request.getCurrency(),
+                request.getPayPeriod(),
+                employerUsername,
+                pageable
+        );
 
-        return jobs.map(j -> JobMapper.toDTO(j, candidateUsername));
+        return jobs.map(job -> JobMapper.toDTO(job, candidateUsername));
     }
 
-    /* ─────────────────────── COMMANDS (CRUD) ─────────────────────── */
+    /* ---------- commands ---------- */
 
     @Transactional
     public JobResponse create(JobRequest request) {
@@ -195,6 +156,45 @@ public class JobService {
 
     @Transactional
     public void delete(Long id) {
-        jobRepo.deleteById(id);
+        Job job = jobRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Job not found with id: " + id));
+
+        if (Boolean.TRUE.equals(job.getIsDeleted())) {
+            throw new IllegalStateException("Job is already deleted");
+        }
+
+        job.setIsDeleted(true);
+        job.setUpdatedAt(LocalDateTime.now());
+        jobRepo.save(job);
     }
+
+    private void normalizeAllFields(JobFilterRequest request) {
+        if ("all".equalsIgnoreCase(request.getEmploymentType())) {
+            request.setEmploymentType(null);
+        }
+        if ("all".equalsIgnoreCase(request.getCity())) {
+            request.setCity(null);
+        }
+        if ("all".equalsIgnoreCase(request.getCountry())) {
+            request.setCountry(null);
+        }
+        if ("all".equalsIgnoreCase(request.getCurrency())) {
+            request.setCurrency(null);
+        }
+        if ("all".equalsIgnoreCase(request.getPayPeriod())) {
+            request.setPayPeriod(null);
+        }
+    }
+
+    private LocalDateTime resolveCreatedAfter(String datePosted) {
+        if (!StringUtils.hasText(datePosted) || "all".equalsIgnoreCase(datePosted)) return null;
+
+        return switch (datePosted.toLowerCase()) {
+            case "day" -> LocalDateTime.now().minusDays(1);
+            case "week" -> LocalDateTime.now().minusWeeks(1);
+            case "month" -> LocalDateTime.now().minusMonths(1);
+            default -> null;
+        };
+    }
+
 }

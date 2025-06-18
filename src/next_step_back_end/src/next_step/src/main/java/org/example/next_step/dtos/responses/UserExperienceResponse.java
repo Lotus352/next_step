@@ -2,6 +2,8 @@ package org.example.next_step.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.example.next_step.dtos.requests.ExperienceLevelRequest;
+import org.example.next_step.models.ExperienceLevel;
 
 import java.time.LocalDateTime;
 

@@ -1,13 +1,19 @@
 package org.example.next_step.controllers;
 
-import org.example.next_step.dtos.requests.RegisterRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.example.next_step.dtos.requests.ChangePasswordRequest;
 import org.example.next_step.dtos.requests.UserRequest;
+import org.example.next_step.dtos.responses.JobResponse;
 import org.example.next_step.dtos.responses.UserResponse;
+import org.example.next_step.security.JwtTokenProvider;
 import org.example.next_step.services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.Set;
 
@@ -17,6 +23,7 @@ import java.util.Set;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/{username}")
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
@@ -26,7 +33,7 @@ public class UserController {
 
     @PutMapping("/profile/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest user) {
-        userService.updateUser(id, user);
+        userService.update(id, user);
         return ResponseEntity.ok().build();
     }
 
@@ -37,9 +44,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/skills")
-    public ResponseEntity<Void> updateUserSkills(@PathVariable Long id, @RequestBody Set<Long> skillIds) {
-        userService.updateUserSkills(id, skillIds);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserResponse> updateUserSkills(@PathVariable Long id, @RequestBody Set<Long> skillIds) {
+        return ResponseEntity.ok(userService.updateUserSkills(id, skillIds));
     }
 
     @PostMapping("/{id}/avatar")
@@ -49,15 +55,10 @@ public class UserController {
     }
 
     @PostMapping("/{id}/resume")
-    public ResponseEntity<String> uploadResume(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadResume(@PathVariable Long id,
+                                               @RequestParam("file") MultipartFile file) {
         String resumeUrl = userService.uploadResume(id, file);
         return ResponseEntity.ok(resumeUrl);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/exists/username/{username}")
@@ -71,4 +72,63 @@ public class UserController {
         boolean exists = userService.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Long id,
+            @RequestBody @Valid ChangePasswordRequest request) {
+        userService.changePassword(id, request);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @GetMapping("/{id}/favorite-jobs")
+    public ResponseEntity<Page<JobResponse>> getFavoriteJobs(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<JobResponse> favoriteJobs = userService.getFavoriteJobs(id, page, size);
+        return ResponseEntity.ok(favoriteJobs);
+    }
+
+    @PutMapping("/is-send")
+    public ResponseEntity<Void> toggleIsSend(HttpServletRequest request) {
+        String username = getUsernameRequest(request);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        userService.toggleIsSend(username);
+        return ResponseEntity.ok().build();
+    }
+
+
+    /* ---------- commands ---------- */
+
+    @PostMapping
+    public ResponseEntity<UserResponse> create(@RequestBody @Valid UserRequest request) {
+        UserResponse body = userService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody @Valid UserRequest request) {
+        return ResponseEntity.ok(userService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    private String getUsernameRequest(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = jwtTokenProvider.extractToken(authorizationHeader);
+        String username = null;
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            username = jwtTokenProvider.extractUsername(token);
+        }
+        return username;
+    }
+
 } 

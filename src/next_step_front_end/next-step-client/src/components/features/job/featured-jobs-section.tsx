@@ -159,21 +159,6 @@ export default function FeaturedJobsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          {/* Badge */}
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 shadow-sm border border-primary/20"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-          >
-            <Briefcase className="h-4 w-4" />
-            <span className="text-sm font-semibold">Latest Opportunities</span>
-            <Badge variant="secondary" className="text-xs px-2 py-0.5">
-              New
-            </Badge>
-          </motion.div>
-
           {/* Main Title */}
           <motion.h2
             className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6"

@@ -8,7 +8,6 @@ import org.example.next_step.dtos.requests.JobRequest;
 import org.example.next_step.dtos.responses.JobFeaturedResponse;
 import org.example.next_step.dtos.responses.JobResponse;
 import org.example.next_step.dtos.responses.UserResponse;
-import org.example.next_step.models.Role;
 import org.example.next_step.services.JobService;
 import org.example.next_step.services.UserService;
 import org.springframework.data.domain.Page;
@@ -20,9 +19,6 @@ import org.example.next_step.security.JwtTokenProvider;
 
 import java.util.Set;
 
-/**
- * REST endpoints for the Job entity.
- */
 @RestController
 @RequestMapping(path = "/api/jobs", produces = "application/json")
 @RequiredArgsConstructor
@@ -63,7 +59,17 @@ public class JobController {
         return ResponseEntity.ok(service.filter(page, size, filter, username));
     }
 
-    /* ─────────────────────── COMMANDS ─────────────────────── */
+    @PutMapping("/{id}/favorite")
+    public ResponseEntity<Void> toggleFavoriteJob(@PathVariable Long id, HttpServletRequest request) {
+        String username = getUsernameRequest(request);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        service.toggleFavoriteJob(id, username);
+        return ResponseEntity.ok().build();
+    }
+
+    /* ---------- commands ---------- */
 
     @PostMapping
     public ResponseEntity<JobResponse> create(@RequestBody JobRequest request,
@@ -91,15 +97,7 @@ public class JobController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/favorite")
-    public ResponseEntity<Void> toggleFavoriteJob(@PathVariable Long id, HttpServletRequest request) {
-        String username = getUsernameRequest(request);
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        service.toggleFavoriteJob(id, username);
-        return ResponseEntity.ok().build();
-    }
+    /* ---------- private helpers ---------- */
 
     private String getUsernameRequest(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
@@ -110,5 +108,4 @@ public class JobController {
         }
         return username;
     }
-
 }

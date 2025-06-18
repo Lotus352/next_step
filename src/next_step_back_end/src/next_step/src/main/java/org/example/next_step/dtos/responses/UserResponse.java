@@ -19,6 +19,7 @@ public class UserResponse {
     private String resumeUrl;
     private String status;
     private String bio;
+    private Boolean isSend;
     private String phoneNumber;
     private String nationality;
     private CompanyResponse company;

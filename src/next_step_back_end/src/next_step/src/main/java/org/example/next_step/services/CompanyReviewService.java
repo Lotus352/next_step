@@ -12,9 +12,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for CompanyReview entity.
- */
 @Service
 @RequiredArgsConstructor
 public class CompanyReviewService {
@@ -22,8 +19,6 @@ public class CompanyReviewService {
     private final CompanyReviewRepository reviewRepo;
     private final CompanyRepository companyRepo;
     private final UserRepository userRepo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<CompanyReviewResponse> getAllReviews(int page, int size) {
@@ -55,13 +50,13 @@ public class CompanyReviewService {
     /* ---------- commands ---------- */
 
     @Transactional
-    public CompanyReviewResponse createReview(CompanyReviewRequest request) {
+    public CompanyReviewResponse create(CompanyReviewRequest request) {
         CompanyReview entity = CompanyReviewMapper.toEntity(request, companyRepo, userRepo);
         return CompanyReviewMapper.toDTO(reviewRepo.save(entity));
     }
 
     @Transactional
-    public CompanyReviewResponse updateReview(Long id, CompanyReviewRequest request) {
+    public CompanyReviewResponse update(Long id, CompanyReviewRequest request) {
         CompanyReview existing = reviewRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
         CompanyReviewMapper.updateEntity(existing, request, companyRepo, userRepo);
@@ -69,7 +64,7 @@ public class CompanyReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long id) {
+    public void delete(Long id) {
         reviewRepo.deleteById(id);
     }
 

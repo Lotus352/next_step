@@ -39,7 +39,7 @@ export default function CompanyDescription() {
                         <div className="flex-shrink-0">
                             <motion.div whileHover={{scale: 1.05}}
                                         transition={{type: "spring", stiffness: 300, damping: 10}}>
-                                <Avatar className="h-28 w-28 border-2 border-primary/20 rounded-2xl shadow-lg">
+                                <Avatar className="h-28 w-28 border-none p-2 border-primary/20 rounded-2xl shadow-lg">
                                     <AvatarImage src={company?.logoUrl || ""} alt={`${company?.name} logo`}/>
                                     <AvatarFallback
                                         className="text-2xl font-bold rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 text-primary">

@@ -8,6 +8,8 @@ import org.example.next_step.models.User;
 import org.example.next_step.repositories.JobRepository;
 import org.example.next_step.repositories.UserRepository;
 
+import java.time.LocalDateTime;
+
 public class NotificationMapper {
 
     public static NotificationResponse toDTO(Notification notification) {
@@ -42,7 +44,7 @@ public class NotificationMapper {
         }
         notification.setMessage(request.getMessage());
         notification.setStatus(request.getStatus());
-        notification.setCreatedAt(request.getCreatedAt());
+        notification.setCreatedAt(LocalDateTime.now());
         notification.setReadAt(request.getReadAt());
         return notification;
     }

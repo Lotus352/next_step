@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for Company entity.
- */
 @RestController
 @RequestMapping(path = "/api/companies", produces = "application/json")
 @RequiredArgsConstructor
@@ -22,11 +19,8 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    /* ---------- queries ---------- */
-
     @GetMapping
-    public ResponseEntity<Page<CompanyResponse>> findAll(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<CompanyResponse>> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(companyService.findAll(page, size));
     }
 
@@ -49,14 +43,13 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyResponse> update(@PathVariable Long id,
-                                                  @RequestBody @Valid CompanyRequest request) {
+    public ResponseEntity<CompanyResponse> update(@PathVariable Long id, @RequestBody @Valid CompanyRequest request) {
         return ResponseEntity.ok(companyService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        companyService.softDelete(id);
+        companyService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

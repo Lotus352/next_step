@@ -10,16 +10,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for Skill entity.
- */
 @Service
 @RequiredArgsConstructor
 public class SkillService {
 
     private final SkillRepository repo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<SkillResponse> findAll(int page, int size) {

@@ -15,6 +15,7 @@ import {
     GraduationCap,
     CheckCircle,
     Sparkles,
+    Crosshair
 } from "lucide-react"
 import {Badge} from "@/components/ui/badge"
 import {motion} from "framer-motion"
@@ -51,8 +52,8 @@ export default function JobDetailDescription() {
                         <div className="mb-10">
                             <div className="flex items-center gap-2 mb-6">
                                 <div className="p-1.5 rounded-lg bg-primary/10">
-                                    <Sparkles
-                                        className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-180"/>
+                                    <Crosshair
+                                        className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-12"/>
                                 </div>
                                 <span className="text-xl font-bold text-foreground">Overview</span>
                                 <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>
@@ -198,7 +199,7 @@ export default function JobDetailDescription() {
                                 <div className="flex items-center gap-2 mb-6">
                                     <div className="p-1.5 rounded-lg bg-primary/10">
                                         <Lightbulb
-                                            className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-180"/>
+                                            className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-12"/>
                                     </div>
                                     <span className="text-xl font-bold text-foreground">Required Skills</span>
                                     <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>
@@ -240,7 +241,7 @@ export default function JobDetailDescription() {
                                 <div className="flex items-center gap-2 mb-6">
                                     <div className="p-1.5 rounded-lg bg-primary/10">
                                         <Sparkles
-                                            className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-180"/>
+                                            className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-12"/>
                                     </div>
                                     <span className="text-xl font-bold text-foreground">Benefits & Perks</span>
                                     <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>

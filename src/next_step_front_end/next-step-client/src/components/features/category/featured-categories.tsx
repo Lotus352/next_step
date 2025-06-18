@@ -15,10 +15,10 @@ import {Badge} from "@/components/ui/badge"
 
 export default function FeaturedCategories() {
     const dispatch = useDispatch<AppDispatch>()
-    const {featured, status} = useSelector((state: RootState) => state.industries)
+    const {featured, statuses} = useSelector((state: RootState) => state.industries)
 
     useEffect(() => {
-        dispatch(fetchFeaturedIndustries(FEATURED_CATEGORIES_LIMIT))
+        dispatch(fetchFeaturedIndustries({size: FEATURED_CATEGORIES_LIMIT}))
         return () => {
             dispatch(clearIndustries())
         }
@@ -41,10 +41,10 @@ export default function FeaturedCategories() {
     }
 
     const renderContent = () => {
-        if (status === "loading") {
+        if (statuses.fetching === "loading") {
             return <Loading/>
         }
-        if (status === "failed") {
+        if (statuses.fetching === "failed") {
             return <AlertDestructive message="Failed to fetch featured categories"/>
         }
         return (

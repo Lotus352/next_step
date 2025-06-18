@@ -1,170 +1,109 @@
-"use client";
+"use client"
 
-import {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {
-    Briefcase,
-    Building,
-    MapPin,
-    Clock,
-} from "lucide-react";
-import {Card, CardContent, CardFooter} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import type {AppDispatch, RootState} from "@/store/store";
-import {filterJobs, resetJobFilter, fetchJobById} from "@/store/slices/jobs-slice";
-import {formatTextEnum} from "@/lib/utils";
-import {motion} from "framer-motion";
-import Loading from "@/components/loading";
-import {Avatar, AvatarImage} from "@/components/ui/avatar";
-import {DEFAULT_JOB_SIZE, DEFAULT_PAGE, DEFAULT_JOB_FILTER} from "@/constants.ts";
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Briefcase, MapPin, Users } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { AppDispatch, RootState } from "@/store/store"
+import { filterJobs, resetJobFilter, fetchJobById } from "@/store/slices/jobs-slice"
+import { formatTextEnum } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+import Loading from "@/components/loading"
+import { DEFAULT_JOB_SIZE, DEFAULT_PAGE, DEFAULT_JOB_FILTER } from "@/constants"
 
 export default function JobListings() {
-    const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch()
 
-    const jobs = useSelector((state: RootState) => state.jobs.content);
-    const status = useSelector((state: RootState) => state.jobs.statuses);
+  const jobs = useSelector((state: RootState) => state.jobs.content)
+  const status = useSelector((state: RootState) => state.jobs.statuses)
 
-    useEffect(() => {
-        dispatch(resetJobFilter());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(resetJobFilter())
+  }, [dispatch])
 
-    useEffect(() => {
-        dispatch(filterJobs({
-            page: DEFAULT_PAGE,
-            size: DEFAULT_JOB_SIZE,
-            filter: DEFAULT_JOB_FILTER
-        }));
-    }, [dispatch]);
-
-    const renderContent = () => {
-        if (status.filtering === "loading") {
-            return (
-                <Loading/>
-            );
-        }
-        if (status.filtering === "succeeded" && jobs.length === 0) {
-            return (
-                <Card className="border border-primary/20 shadow-sm">
-                    <CardContent className="flex flex-col items-center justify-center py-16">
-                        <Briefcase className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50"/>
-                        <h3 className="text-lg font-medium mb-2">No job listings found</h3>
-                        <p className="text-muted-foreground mb-6 max-w-md mx-auto text-center">
-                            There are currently no job listings matching your criteria. Try
-                            adjusting your filters or check back later.
-                        </p>
-                        <Button variant="default" size="sm">
-                            Create New Job
-                        </Button>
-                    </CardContent>
-                </Card>
-            )
-        }
-        return (
-            <div className="space-y-4">
-                <motion.div
-                    className="space-y-4"
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    transition={{duration: 0.5}}
-                >
-                    {jobs.map((job, index) => (
-                        <motion.div
-                            key={job.jobId}
-                            initial={{opacity: 0, y: 20}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{delay: index * 0.05}}
-                        >
-                            <Card
-                                className="cursor-pointer hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden group border border-primary/20"
-                                onClick={() => dispatch(fetchJobById(job.jobId))}
-                            >
-                                <CardContent className="p-5">
-                                    <div className="flex items-start gap-4">
-                                        <div
-                                            className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg flex items-center justify-center p-3 mt-1 group-hover:scale-110 transition-transform duration-200">
-                                            <Avatar className="h-6 w-6 border-0 rounded-lg">
-                                                <AvatarImage
-                                                    src={job.postedBy.company.logoUrl || ""}
-                                                    alt={`${job.postedBy.company.name} logo`}
-                                                />
-                                            </Avatar>
-
-                                        </div>
-                                        <div className="space-y-2 flex-1">
-                                            <div className="flex items-start justify-between">
-                                                <div>
-                                                    <h3 className="font-medium text-lg group-hover:text-primary transition-colors">
-                                                        {job.title}
-                                                    </h3>
-                                                    <div className="flex items-center text-sm text-muted-foreground">
-                                                        <Building className="h-3.5 w-3.5 mr-1.5"/>
-                                                        {job.postedBy?.username ||
-                                                            job.postedBy?.email ||
-                                                            "Company Name"}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    {job.status ? (
-                                                        <Badge variant="default" className="text-xs">
-                                                            Active
-                                                        </Badge>
-                                                    ) : (
-                                                        <Badge variant="secondary" className="text-xs">
-                                                            Inactive
-                                                        </Badge>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-wrap gap-2 mt-3">
-                                                {job.location && (
-                                                    <Badge
-                                                        variant="outline"
-                                                        className="text-xs flex items-center gap-1 bg-primary/5 border-primary/20"
-                                                    >
-                                                        <MapPin className="h-3 w-3"/>
-                                                        {job.location.city}, {job.location.countryName}
-                                                    </Badge>
-                                                )}
-                                                {job.employmentType && (
-                                                    <Badge
-                                                        variant="outline"
-                                                        className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800"
-                                                    >
-                                                        {formatTextEnum(job.employmentType)}
-                                                    </Badge>
-                                                )}
-                                            </div>
-
-                                            {job.detailedDescription && (
-                                                <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
-                                                    {job.detailedDescription}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-
-                                <CardFooter className="bg-muted/20 py-3 px-5 flex justify-between border-t">
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center text-xs text-muted-foreground">
-                                            <Clock className="h-3.5 w-3.5 mr-1.5"/>
-                                            {job.createdAt
-                                                ? (<span> Posted {new Date(job.createdAt).toLocaleDateString()}</span>)
-                                                : (<span>Recently posted</span>)}
-                                        </div>
-                                    </div>
-                                </CardFooter>
-                            </Card>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </div>
-        )
-    }
-
-    return (
-        <>{renderContent()}</>
+  useEffect(() => {
+    dispatch(
+        filterJobs({
+          page: DEFAULT_PAGE,
+          size: DEFAULT_JOB_SIZE,
+          filter: DEFAULT_JOB_FILTER,
+        }),
     )
+  }, [dispatch])
+
+  const handleJobSelect = (jobId: number) => {
+    dispatch(fetchJobById(jobId))
+  }
+
+  if (status.filtering === "loading") {
+    return <Loading />
+  }
+
+  if (status.filtering === "succeeded" && jobs.length === 0) {
+    return (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
+          <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No job listings found</h3>
+          <p className="text-muted-foreground text-sm">There are currently no job listings available.</p>
+        </motion.div>
+    )
+  }
+
+  return (
+      <motion.div className="space-y-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <AnimatePresence>
+          {jobs.map((job, index) => (
+              <motion.div
+                  key={job.jobId}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: index * 0.05 }}
+              >
+                <Card
+                    className="cursor-pointer hover:border-primary hover:shadow-md transition-all duration-300 border-border/30 bg-background/80 backdrop-blur-sm"
+                    onClick={() => handleJobSelect(job.jobId)}
+                >
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      {/* Job Title */}
+                      <h3 className="font-semibold text-foreground hover:text-primary transition-colors duration-300 line-clamp-2">
+                        {job.title}
+                      </h3>
+
+                      {/* Job Details */}
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {job.location && (
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {job.location.city}
+                            </Badge>
+                        )}
+
+                        {job.employmentType && (
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              <Briefcase className="h-3 w-3" />
+                              {formatTextEnum(job.employmentType)}
+                            </Badge>
+                        )}
+
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {job.status ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+
+                      {/* Short Description */}
+                      {job.shortDescription && (
+                          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{job.shortDescription}</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+  )
 }

@@ -1,9 +1,9 @@
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import axiosClient from "@/api/axios-client";
-import type JobApplicationType from "@/types/job-application-type";
 import type JobApplicationInformationType from "@/types/job-application-information-type";
 import type JobApplicationFilterType from "@/types/job-application-filter-type";
 import {DEFAULT_JOB_APPLICATION_FILTER, DEFAULT_PAGE, DEFAULT_JOB_APPLICATION_SIZE} from "@/constants";
+import JobApplicationType, {JobApplicationRequest} from "@/types/job-application-type.ts";
 
 interface PageResp {
     content: JobApplicationType[];
@@ -15,6 +15,8 @@ interface PageResp {
 interface JobAppsState extends PageResp {
     info: JobApplicationInformationType | null;
     selected: JobApplicationType | null;
+    hasApplied: JobApplicationType | null,
+    canWithdraw: boolean | null;
     statuses: {
         fetchingInfo: "idle" | "loading" | "failed" | "succeeded";
         fetchingById: "idle" | "loading" | "failed" | "succeeded";
@@ -22,6 +24,9 @@ interface JobAppsState extends PageResp {
         applying: "idle" | "loading" | "failed" | "succeeded";
         deleting: "idle" | "loading" | "failed" | "succeeded";
         updating: "idle" | "loading" | "failed" | "succeeded";
+        creating: "idle" | "loading" | "failed" | "succeeded";
+        checkingApplied: "idle" | "loading" | "failed" | "succeeded";
+        checkingCanWithdraw: "idle" | "loading" | "failed" | "succeeded";
     }
     filter: JobApplicationFilterType;
     error: string | null,
@@ -34,7 +39,8 @@ const initialState: JobAppsState = {
     totalElements: 0,
     info: null,
     selected: null,
-
+    hasApplied: null,
+    canWithdraw: null,
     statuses: {
         fetchingInfo: "idle",
         fetchingById: "idle",
@@ -42,12 +48,16 @@ const initialState: JobAppsState = {
         applying: "idle",
         deleting: "idle",
         updating: "idle",
+        creating: "idle",
+        checkingApplied: "idle",
+        checkingCanWithdraw: "idle",
     },
     filter: DEFAULT_JOB_APPLICATION_FILTER,
 
     error: null,
 };
 
+/* ---------- Thunks ---------- */
 export const fetchApplicationById = createAsyncThunk<
     JobApplicationType,
     number
@@ -109,13 +119,28 @@ export const apply = createAsyncThunk<
     return data as string;
 });
 
-export const deleteApplication = createAsyncThunk<number, number>(
-    "jobApps/delete",
-    async (id) => {
-        await axiosClient.delete(`/api/job-applications/${id}`);
-        return id;
-    },
-);
+export const createApplication = createAsyncThunk<
+    JobApplicationType,
+    JobApplicationRequest
+>("jobApps/create", async (applicationData) => {
+    const {data} = await axiosClient.post("/api/job-applications", applicationData);
+    return data;
+});
+
+export const updateApplication = createAsyncThunk<
+    JobApplicationType,
+    { id: number; applicationData: JobApplicationRequest }
+>("jobApps/update", async ({id, applicationData}) => {
+    const {data} = await axiosClient.put(`/api/job-applications/${id}`, applicationData);
+    return data;
+});
+
+export const deleteApplication = createAsyncThunk<
+    void,
+    { id: number }
+>("jobApps/delete", async ({id}) => {
+    await axiosClient.delete(`/api/job-applications/${id}`);
+});
 
 export const updateApplicationStatus = createAsyncThunk<
     void,
@@ -127,6 +152,34 @@ export const updateApplicationStatus = createAsyncThunk<
     await axiosClient.put(`/api/job-applications/${id}/status?status=${status}`);
 });
 
+export const checkHasApplied = createAsyncThunk<
+    JobApplicationType | null,
+    number
+>("jobApps/checkHasApplied", async (jobId) => {
+    try {
+        const {data} = await axiosClient.get(`/api/job-applications/has-applied`, {
+            params: {jobId},
+        });
+        return data as JobApplicationType;
+    } catch (error: any) {
+        if (error.response?.status === 404) {
+            return null;
+        }
+        throw error;
+    }
+});
+
+
+export const checkCanWithdraw = createAsyncThunk<
+    boolean,
+    number
+>("jobApps/checkCanWithdraw", async (applicationId) => {
+    const {data} = await axiosClient.get(`/api/job-applications/${applicationId}/can-withdraw`);
+    return data as boolean;
+});
+
+
+/* ---------- Slice ---------- */
 const jobAppsSlice = createSlice({
     name: "jobApplications",
     initialState,
@@ -141,7 +194,7 @@ const jobAppsSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
-        setFilter: (state, a) => {
+        setFilter: (state, a: PayloadAction<JobApplicationFilterType>) => {
             state.filter = a.payload;
         },
         resetFilter: (state) => {
@@ -155,12 +208,16 @@ const jobAppsSlice = createSlice({
                 state.statuses[key as keyof typeof state.statuses] = "idle";
             });
         },
+        resetHasApplied: (state) => {
+            state.hasApplied = null
+            state.statuses.checkingApplied = "idle";
+        }
     },
-    extraReducers: (b) => {
-        b
+    extraReducers: (builder) => {
+        builder
             /* Fetch Application Info By Job */
             .addCase(fetchApplicationInfoByJob.pending, (s) => {
-                s.statuses.fetchingById = "loading";
+                s.statuses.fetchingInfo = "loading";
                 s.error = null;
             })
             .addCase(fetchApplicationInfoByJob.fulfilled, (s, a) => {
@@ -216,6 +273,44 @@ const jobAppsSlice = createSlice({
                 s.error = "Failed to apply for job";
             })
 
+            /* Create Application */
+            .addCase(createApplication.pending, (s) => {
+                s.statuses.creating = "loading";
+                s.error = null;
+            })
+            .addCase(createApplication.fulfilled, (s, a) => {
+                s.statuses.creating = "succeeded";
+                // Add new application to the beginning of content array
+                s.content.unshift(a.payload);
+                s.totalElements += 1;
+            })
+            .addCase(createApplication.rejected, (s) => {
+                s.statuses.creating = "failed";
+                s.error = "Failed to create application";
+            })
+
+            /* Update Application */
+            .addCase(updateApplication.pending, (s) => {
+                s.statuses.updating = "loading";
+                s.error = null;
+            })
+            .addCase(updateApplication.fulfilled, (s, a) => {
+                s.statuses.updating = "succeeded";
+                // Update application in content array
+                const appIndex = s.content.findIndex(app => app.applicationId === a.payload.applicationId);
+                if (appIndex !== -1) {
+                    s.content[appIndex] = a.payload;
+                }
+                // Update selected if it matches
+                if (s.selected && s.selected.applicationId === a.payload.applicationId) {
+                    s.selected = a.payload;
+                }
+            })
+            .addCase(updateApplication.rejected, (s) => {
+                s.statuses.updating = "failed";
+                s.error = "Failed to update application";
+            })
+
             /* Delete Application */
             .addCase(deleteApplication.pending, (s) => {
                 s.statuses.deleting = "loading";
@@ -223,13 +318,15 @@ const jobAppsSlice = createSlice({
             })
             .addCase(deleteApplication.fulfilled, (s, a) => {
                 s.statuses.deleting = "succeeded";
+                const applicationId = a.meta.arg.id;
+                // Remove from content array
                 s.content = s.content.filter(
-                    (app) => app.applicationId !== a.payload
+                    (app) => app.applicationId !== applicationId
                 );
                 s.totalElements = Math.max(0, s.totalElements - 1);
 
                 // Clear selected if it was deleted
-                if (s.selected && s.selected.applicationId === a.payload) {
+                if (s.selected && s.selected.applicationId === applicationId) {
                     s.selected = null;
                 }
             })
@@ -238,7 +335,7 @@ const jobAppsSlice = createSlice({
                 s.error = "Failed to delete application";
             })
 
-            /* Update Application Status */
+            // Update Application Status
             .addCase(updateApplicationStatus.pending, (s) => {
                 s.statuses.updating = "loading";
                 s.error = null;
@@ -262,7 +359,37 @@ const jobAppsSlice = createSlice({
             .addCase(updateApplicationStatus.rejected, (s) => {
                 s.statuses.updating = "failed";
                 s.error = "Failed to update application status";
-            });
+            })
+
+            // Check if candidate has applied
+            .addCase(checkHasApplied.pending, (s) => {
+                s.statuses.checkingApplied = "loading";
+                s.error = null;
+            })
+            .addCase(checkHasApplied.fulfilled, (s, a) => {
+                s.statuses.checkingApplied = "succeeded";
+                s.hasApplied = a.payload;
+            })
+            .addCase(checkHasApplied.rejected, (s) => {
+                s.statuses.checkingApplied = "failed";
+                s.error = "Failed to check application status";
+            })
+
+            // Check can withdraw
+            .addCase(checkCanWithdraw.pending, (s) => {
+                s.statuses.checkingCanWithdraw = "loading";
+                s.error = null;
+            })
+            .addCase(checkCanWithdraw.fulfilled, (s, a) => {
+                s.statuses.checkingCanWithdraw = "succeeded";
+                s.canWithdraw = a.payload;
+            })
+            .addCase(checkCanWithdraw.rejected, (s) => {
+                s.statuses.checkingCanWithdraw = "failed";
+                s.error = "Failed to check can withdraw";
+            })
+
+        ;
     },
 });
 

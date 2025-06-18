@@ -10,16 +10,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for Permission entity.
- */
 @Service
 @RequiredArgsConstructor
 public class PermissionService {
 
     private final PermissionRepository repo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<PermissionResponse> findAll(int page, int size) {

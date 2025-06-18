@@ -20,7 +20,7 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {Badge} from "@/components/ui/badge"
 import type CompanyReviewType from "@/types/company-review-type"
 import {fetchCompanyById} from "@/store/slices/companies-slice"
-import {ReviewNotification} from "@/components/notifications/review-notification.tsx"
+import {ReviewNotification} from "@/components/notification-state/review-notification.tsx"
 
 type NotificationType = "success" | "error" | "info" | "warning"
 

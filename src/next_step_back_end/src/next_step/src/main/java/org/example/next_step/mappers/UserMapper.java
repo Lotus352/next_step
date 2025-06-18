@@ -24,6 +24,7 @@ public class UserMapper {
                 .phoneNumber(user.getPhoneNumber())
                 .bio(user.getBio() != null ? user.getBio() : "")
                 .nationality(user.getNationality())
+                .isSend(user.getIsSend() != null ? user.getIsSend() : true)
                 .roles(user.getRoles().stream().map(RoleMapper::toDTO).collect(Collectors.toSet()))
                 .company(CompanyMapper.toDTO(user.getCompany()))
                 .experiences(user.getExperiences() != null ?
@@ -68,6 +69,9 @@ public class UserMapper {
         if (request.getBio() != null) {
             user.setBio(request.getBio());
         }
+        if (request.getIsSend() != null) {
+            user.setIsSend(request.getIsSend());
+        }
         return user;
     }
 
@@ -97,6 +101,22 @@ public class UserMapper {
         }
         if (request.getBio() != null) {
             user.setBio(request.getBio());
+        }
+        if (request.getIsSend() != null) {
+            user.setIsSend(request.getIsSend());
+        }
+        if (request.getExperiences() != null) {
+            user.getExperiences().clear();
+
+            Set<UserExperience> newExperiences = request.getExperiences().stream()
+                    .map(exp -> {
+                        UserExperience entity = UserExperienceMapper.toEntity(exp);
+                        entity.setUser(user);
+                        return entity;
+                    })
+                    .collect(Collectors.toSet());
+
+            user.getExperiences().addAll(newExperiences);
         }
     }
 }

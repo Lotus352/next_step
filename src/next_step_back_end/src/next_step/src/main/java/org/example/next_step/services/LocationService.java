@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,12 +23,14 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
 public class LocationService {
+
     private final LocationRepository repo;
     private static final String COUNTRIES_JSON_PATH = "src/main/java/org/example/next_step/data/countries.min.json";
     private static Map<String, List<String>> countryCityMap;
@@ -37,7 +40,8 @@ public class LocationService {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 String json = new String(Files.readAllBytes(Paths.get(COUNTRIES_JSON_PATH)));
-                countryCityMap = mapper.readValue(json, new TypeReference<Map<String, List<String>>>() {});
+                countryCityMap = mapper.readValue(json, new TypeReference<Map<String, List<String>>>() {
+                });
             } catch (IOException e) {
                 countryCityMap = new HashMap<>();
                 throw new RuntimeException("Không thể đọc dữ liệu quốc gia/city từ file JSON", e);
@@ -45,17 +49,12 @@ public class LocationService {
         }
     }
 
-    /* ────────────── queries ────────────── */
-
     @Transactional(readOnly = true)
     public Page<LocationResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("countryName", "city"));
         return repo.findAll(pageable).map(LocationMapper::toDTO);
     }
 
-    /**
-     * Returns distinct city names; pass "all" to get cities of every country.
-     */
     @Transactional(readOnly = true)
     public List<String> findCitiesByCountry(String country) {
         loadCountryCityData();
@@ -69,25 +68,6 @@ public class LocationService {
         return countryCityMap.getOrDefault(country, new ArrayList<>());
     }
 
-    public List<String> findStatesByCountry(String country) {
-
-        String url = UriComponentsBuilder.newInstance().scheme("https").host("countriesnow.space").path("/api/v0.1/countries/states/q").queryParam("country", country).toUriString();
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
-
-        List<String> states = new ArrayList<>();
-        if (response.getStatusCode().is2xxSuccessful()) {
-            JsonNode body = response.getBody();
-            if (body != null && !body.path("error").asBoolean()) {
-                JsonNode statesNode = body.path("data").path("states");
-                statesNode.forEach(state -> states.add(state.path("name").asText()));
-            }
-        }
-        return states;
-    }
-
     public List<String> findAllCountries() {
         loadCountryCityData();
         return new ArrayList<>(countryCityMap.keySet());
@@ -98,8 +78,6 @@ public class LocationService {
         Location loc = repo.findById(id).orElseThrow(() -> new RuntimeException("Location not found"));
         return LocationMapper.toDTO(loc);
     }
-
-    /* ────────────── commands ────────────── */
 
     @Transactional
     public LocationResponse create(LocationRequest request) {

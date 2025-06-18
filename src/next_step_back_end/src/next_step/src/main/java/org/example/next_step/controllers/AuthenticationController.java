@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.next_step.dtos.requests.AuthRequest;
 import org.example.next_step.dtos.requests.RegisterRequest;
 import org.example.next_step.dtos.responses.AuthResponse;
+import org.example.next_step.dtos.responses.UserResponse;
 import org.example.next_step.security.JwtTokenProvider;
 import org.example.next_step.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,9 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest request,
-                                              HttpServletResponse response) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest request, HttpServletResponse response) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
@@ -42,14 +41,20 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request, HttpServletResponse response) {
         userService.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+        addRefreshTokenCookie(response, refreshToken);
+        return ResponseEntity.ok(new AuthResponse(accessToken));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@CookieValue(name = "refreshToken", defaultValue = "") String oldToken,
-                                                     HttpServletResponse response) {
+    public ResponseEntity<AuthResponse> refreshToken(@CookieValue(name = "refreshToken", defaultValue = "") String oldToken, HttpServletResponse response) {
 
         if (!jwtTokenProvider.validateToken(oldToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid or expired token"));
@@ -79,12 +84,7 @@ public class AuthenticationController {
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String token, long maxAge) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(maxAge)
-                .build();
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", token).httpOnly(true).secure(true).path("/").maxAge(maxAge).build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
 }

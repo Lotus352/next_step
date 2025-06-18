@@ -12,14 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "user_experience_levels")
-@IdClass(UserExperienceId.class)
 public class UserExperience {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "user_id")
     private Long userId;
-
-    @Id
+    
     @Column(name = "experience_id")
     private Long experienceId;
 

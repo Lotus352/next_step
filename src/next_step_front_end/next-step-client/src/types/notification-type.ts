@@ -6,7 +6,16 @@ export default interface NotificationType {
     user: UserType;
     job: JobType;
     message: string | null;
-    status: string | "UNREAD";
+    status: "READ" | "UNREAD";
+    createdAt: string;
+    readAt: string | null;
+}
+
+export interface NotificationRequest {
+    userId: number;
+    jobId: number;
+    message: string | null;
+    status: "READ" | "UNREAD";
     createdAt: string;
     readAt: string | null;
 }

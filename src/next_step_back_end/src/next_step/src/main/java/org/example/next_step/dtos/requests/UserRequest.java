@@ -23,7 +23,7 @@ public class UserRequest {
     private String bio;
     @Enumerated(EnumType.STRING)
     private Status status;
-
+    private Boolean isSend;
     private Long companyId;
     private Set<Long> skillIds;
     private Set<Long> roleIds;

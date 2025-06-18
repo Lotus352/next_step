@@ -12,9 +12,8 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Business logic for Notification entity.
- */
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -22,8 +21,6 @@ public class NotificationService {
     private final NotificationRepository repo;
     private final UserRepository userRepo;
     private final JobRepository jobRepo;
-
-    /* ---------- queries ---------- */
 
     @Transactional(readOnly = true)
     public Page<NotificationResponse> findAll(int page, int size) {
@@ -33,10 +30,46 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
+    public Page<NotificationResponse> findAll(int page, int size, String username) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "status")
+                .and(Sort.by(Sort.Direction.DESC, "readAt"))
+                .and(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (username != null && !username.isBlank()) {
+            return repo.findByUser_Username(username, pageable)
+                    .map(NotificationMapper::toDTO);
+        }
+
+        return repo.findAll(pageable).map(NotificationMapper::toDTO);
+    }
+
+
+    @Transactional(readOnly = true)
     public NotificationResponse findById(Long id) {
         Notification note = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         return NotificationMapper.toDTO(note);
+    }
+
+    @Transactional
+    public void markAsRead(Long id) {
+        Notification notification = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+        notification.setStatus("READ");
+        notification.setReadAt(LocalDateTime.now());
+        repo.save(notification);
+    }
+
+    @Transactional
+    public void markAllAsRead(String username) {
+        repo.markAllAsReadByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public long countUnreadByUsername(String username) {
+        return repo.countByUsernameAndStatus(username, "UNREAD");
     }
 
     /* ---------- commands ---------- */

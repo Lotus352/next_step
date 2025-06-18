@@ -18,7 +18,6 @@ public class OauthLoginService {
     private final OauthLoginRepository repo;
     private final UserRepository userRepo;
 
-    /* queries */
     public Page<OauthLoginResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
         return repo.findAll(pageable).map(OauthLoginMapper::toDTO);
@@ -30,7 +29,8 @@ public class OauthLoginService {
         return OauthLoginMapper.toDTO(e);
     }
 
-    /* commands */
+    /* ---------- commands ---------- */
+
     @Transactional
     public OauthLoginResponse create(OauthLoginRequest req) {
         OauthLogin e = OauthLoginMapper.toEntity(req, userRepo);

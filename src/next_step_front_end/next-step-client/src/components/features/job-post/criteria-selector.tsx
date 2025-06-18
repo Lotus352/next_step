@@ -32,8 +32,8 @@ export function CriteriaSelector({ onClearAll, onBack, onSubmit }: CriteriaSelec
   const skills = useSelector((state: RootState) => state.skills.content)
   const levels = useSelector((state: RootState) => state.experienceLevels.content)
   const employmentTypes = useSelector((state: RootState) => state.jobs.employmentTypes)
-  const skillsStatus = useSelector((state: RootState) => state.skills.status)
-  const levelsStatus = useSelector((state: RootState) => state.experienceLevels.status)
+  const skillsStatus = useSelector((state: RootState) => state.skills.statuses.fetching)
+  const levelsStatus = useSelector((state: RootState) => state.experienceLevels.statuses.fetching)
   const request = useSelector((state: RootState) => state.jobs.request)
 
   // Local state for form fields
