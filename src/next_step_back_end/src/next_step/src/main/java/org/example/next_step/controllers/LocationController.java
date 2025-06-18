@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST endpoints for Location entity.
- */
 @RestController
 @RequestMapping(path = "/api/locations", produces = "application/json")
 @RequiredArgsConstructor
@@ -23,8 +20,6 @@ import java.util.List;
 public class LocationController {
 
     private final LocationService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<LocationResponse>> findAll(
@@ -39,7 +34,7 @@ public class LocationController {
             @RequestParam(required = true) String country) {
         return ResponseEntity.ok(service.findCitiesByCountry(country.trim()));
     }
-    
+
     @GetMapping("/countries")
     public ResponseEntity<List<String>> findAllCountries() {
         return ResponseEntity.ok(service.findAllCountries());

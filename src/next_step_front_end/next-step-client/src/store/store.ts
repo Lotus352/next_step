@@ -11,6 +11,7 @@ import skillsReducer from "./slices/skills-slice.ts";
 import experienceLevelsReducer from "./slices/experience-levels-slice.ts";
 import salaryReducer from "@/store/slices/salary-slice.ts";
 import userReducer from "@/store/slices/user-slice.ts";
+import favoriteJobReducer from "@/store/slices/favorite-jobs-slice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
     experienceLevels: experienceLevelsReducer,
     salaries: salaryReducer,
     user: userReducer,
+    favoriteJobs: favoriteJobReducer
   },
 });
 

@@ -35,6 +35,7 @@ public class JwtTokenProvider {
     }
 
     private String generateToken(String username, long expiration) {
+        System.out.println(new Date(System.currentTimeMillis() + expiration));
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

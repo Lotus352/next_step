@@ -3,13 +3,13 @@ import type JobApplicationFilterType from "@/types/job-application-filter-type";
 
 export const DEFAULT_LEVEL_SIZE = 50;
 export const DEFAULT_SKILL_SIZE = 50;
+export const DEFAULT_INDUSTRY_SIZE = 50;
 export const DEFAULT_JOB_SIZE = 10;
 export const DEFAULT_REVIEW_SIZE = 5;
 export const DEFAULT_LOCATION_SIZE = 50;
 export const DEFAULT_JOB_APPLICATION_SIZE = 10;
 export const DEFAULT_PAGE = 0;
 export const DEFAULT_STATUS = "ACTIVE";
-export const DEFAULT_EXPIRY_DATE = new Date().toISOString();
 export const DEFAULT_CURRENCY = null
 export const DEFAULT_PAY_PERIOD = null
 export const DEFAULT_MIN_SALARY = 0

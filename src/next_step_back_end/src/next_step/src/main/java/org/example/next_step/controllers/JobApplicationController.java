@@ -13,9 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * REST endpoints for JobApplication entity.
- */
 @RestController
 @RequestMapping(path = "/api/job-applications", produces = "application/json")
 @RequiredArgsConstructor
@@ -23,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class JobApplicationController {
 
     private final JobApplicationService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping("/jobs/{jobId}/information")
     public ResponseEntity<JobApplicationInformationResponse> getApplicationsInformation(
@@ -36,8 +31,6 @@ public class JobApplicationController {
     public ResponseEntity<JobApplicationResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
-
-    /* ---------- command: apply ---------- */
 
     @PostMapping("/jobs/{jobId}/filter")
     public ResponseEntity<Page<JobApplicationResponse>> filterApplicationByJob(
@@ -54,7 +47,6 @@ public class JobApplicationController {
                                         @RequestParam("userId") Long userId,
                                         @RequestParam("jobId") Long jobId,
                                         @RequestParam("coverLetter") String coverLetter) {
-
         String resumeUrl = service.uploadResume(file, userId, jobId, coverLetter);
         return ResponseEntity.status(HttpStatus.CREATED).body(resumeUrl);
     }
@@ -66,7 +58,7 @@ public class JobApplicationController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /* ---------- delete ---------- */
+    /* ---------- commands ---------- */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

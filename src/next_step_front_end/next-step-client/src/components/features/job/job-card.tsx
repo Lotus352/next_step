@@ -113,7 +113,7 @@ export function JobCard({ job }: JobCardProps) {
               <div className="flex gap-4 items-start flex-1">
                 {/* Enhanced company logo */}
                 <div className="relative">
-                  <Avatar className="h-16 w-16 border-2 border-border/30 shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:rotate-2">
+                  <Avatar className="h-16 rounded-xl w-16 border-2 p-1 border-border/30 shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:rotate-2">
                     <AvatarImage
                       src={job.postedBy.company.logoUrl || "/placeholder.svg?height=64&width=64"}
                       alt={`${job.postedBy.company.name} logo`}

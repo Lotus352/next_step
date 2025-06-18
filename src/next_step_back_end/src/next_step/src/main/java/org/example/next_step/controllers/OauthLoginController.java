@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for OauthLogin entity.
- */
 @RestController
 @RequestMapping(path = "/api/oauth-logins", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class OauthLoginController {
 
     private final OauthLoginService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<OauthLoginResponse>> findAll(

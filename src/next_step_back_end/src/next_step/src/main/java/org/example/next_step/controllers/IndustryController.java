@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST endpoints for Industry entity.
- */
 @RestController
 @RequestMapping(path = "/api/industries", produces = "application/json")
 @RequiredArgsConstructor
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class IndustryController {
 
     private final IndustryService service;
-
-    /* ---------- queries ---------- */
 
     @GetMapping
     public ResponseEntity<Page<IndustryResponse>> findAll(

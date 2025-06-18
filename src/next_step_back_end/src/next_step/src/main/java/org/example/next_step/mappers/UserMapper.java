@@ -98,5 +98,18 @@ public class UserMapper {
         if (request.getBio() != null) {
             user.setBio(request.getBio());
         }
+        if (request.getExperiences() != null) {
+            user.getExperiences().clear();
+
+            Set<UserExperience> newExperiences = request.getExperiences().stream()
+                    .map(exp -> {
+                        UserExperience entity = UserExperienceMapper.toEntity(exp);
+                        entity.setUser(user);
+                        return entity;
+                    })
+                    .collect(Collectors.toSet());
+
+            user.getExperiences().addAll(newExperiences);
+        }
     }
 }

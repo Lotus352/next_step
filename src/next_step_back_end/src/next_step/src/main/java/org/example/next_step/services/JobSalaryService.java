@@ -22,8 +22,6 @@ public class JobSalaryService {
 
     private final JobSalaryRepository repo;
 
-    /* ---------- queries ---------- */
-
     @Transactional(readOnly = true)
     public Page<JobSalaryResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("currency", "payPeriod"));
@@ -40,9 +38,7 @@ public class JobSalaryService {
         return repo.findDistinctPayPeriods();
     }
 
-    /**
-     * Returns min / max salary for a given currency + pay period.
-     */
+
     @Transactional(readOnly = true)
     public JobSalaryRangeResponse findSalaryRange(String currency, String payPeriod) {
         List<JobSalary> list = repo.findByCurrencyAndPayPeriod(currency, payPeriod);

@@ -13,6 +13,5 @@ export default interface FeaturedJobType {
     skills: SkillType[];
     salary: SalaryType | null;
     createdAt: string;
-    isFavorite: boolean | null
-    ;
+    isFavorite: boolean | null;
 }

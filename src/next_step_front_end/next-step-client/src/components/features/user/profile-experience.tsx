@@ -100,7 +100,7 @@ export default function ProfileExperience() {
                         <div className="flex items-center gap-2 mb-6">
                             <div className="p-1.5 rounded-lg bg-primary/10">
                                 <GraduationCap
-                                    className="h-4 w-4 text-primary transition-all duration-300 group-hover:rotate-45"/>
+                                    className="h-4 w-4 text-primary transition-all duration-300"/>
                             </div>
                             <span className="text-xl font-bold text-foreground">Education</span>
                             <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"/>

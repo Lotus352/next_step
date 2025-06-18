@@ -19,11 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Business logic for the Job entity.
- * <p>
- * All repository calls correspond to real methods in their interfaces.
- */
 @Service
 @RequiredArgsConstructor
 public class JobService {
@@ -34,20 +29,14 @@ public class JobService {
     private final ExperienceLevelRepository experienceRepo;
     private final UserRepository userRepo;
 
-    /* ─────────────────────── QUERIES ─────────────────────── */
-
-    /**
-     * Returns the distinct set of employment‐type strings present in all jobs.
-     */
     @Transactional(readOnly = true)
     public Set<String> getEmploymentTypes() {
-        return jobRepo.findAll()                       // standard JPA call
+        return jobRepo.findAll()
                 .stream()
                 .map(Job::getEmploymentType)
                 .filter(StringUtils::hasText)
                 .collect(Collectors.toSet());
     }
-
 
     @Transactional(readOnly = true)
     public Set<JobFeaturedResponse> getFeaturedJobs(int size,
@@ -63,9 +52,6 @@ public class JobService {
                 .collect(Collectors.toSet());
     }
 
-    /**
-     * Fetch a single job by primary key.
-     */
     @Transactional(readOnly = true)
     public JobResponse findById(Long id, String username) {
         Job job = jobRepo.findById(id)
@@ -73,9 +59,6 @@ public class JobService {
         return JobMapper.toDTO(job, username);
     }
 
-    /**
-     * Advanced search using dynamic JPQL in {@code JobRepository#findJobsByFilter}.
-     */
     @Transactional(readOnly = true)
     public Page<JobResponse> filter(int page,
                                     int size,
@@ -150,7 +133,7 @@ public class JobService {
         return jobs.map(j -> JobMapper.toDTO(j, candidateUsername));
     }
 
-    /* ─────────────────────── COMMANDS (CRUD) ─────────────────────── */
+    /* ---------- commands ---------- */
 
     @Transactional
     public JobResponse create(JobRequest request) {
@@ -195,6 +178,15 @@ public class JobService {
 
     @Transactional
     public void delete(Long id) {
-        jobRepo.deleteById(id);
+        Job job = jobRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Job not found with id: " + id));
+
+        if (Boolean.TRUE.equals(job.getIsDeleted())) {
+            throw new IllegalStateException("Job is already deleted");
+        }
+
+        job.setIsDeleted(true);
+        job.setUpdatedAt(LocalDateTime.now());
+        jobRepo.save(job);
     }
 }

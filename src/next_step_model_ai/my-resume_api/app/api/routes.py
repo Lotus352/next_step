@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Body
+from fastapi import APIRouter, UploadFile, File, Body, HTTPException
 from app.services.parser import extract_text_from_pdf, parse_resume_text_with_api
 from app.services.matcher import match_cv_with_jd
 
@@ -9,9 +9,29 @@ async def parse_resume(file: UploadFile = File(...)):
     """
     Extracts and parses resume PDF to structured JSON.
     """
-    file_bytes = await file.read()
-    text = extract_text_from_pdf(file_bytes)
-    return parse_resume_text_with_api(text)
+    try:
+        # Basic file validation
+        if not file.filename or not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(status_code=400, detail="Please upload a PDF file")
+        
+        file_bytes = await file.read()
+        
+        if len(file_bytes) == 0:
+            raise HTTPException(status_code=400, detail="File is empty")
+        
+        text = extract_text_from_pdf(file_bytes)
+        
+        if not text or len(text.strip()) < 10:
+            raise HTTPException(status_code=422, detail="Could not extract text from PDF")
+        
+        result = parse_resume_text_with_api(text)
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
+
 
 @router.post("/match-score")
 async def match_score(
@@ -21,4 +41,13 @@ async def match_score(
     """
     Calculates matching score between parsed CV and Job Description.
     """
-    return match_cv_with_jd(cv_data, jd_data)
+    try:
+        # Basic validation
+        if not cv_data or not jd_data:
+            raise HTTPException(status_code=400, detail="Both cv_data and jd_data are required")
+        
+        result = match_cv_with_jd(cv_data, jd_data)
+        return result
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error calculating match: {str(e)}")

@@ -28,12 +28,12 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
   // Redux State
   const countries = useSelector((state: RootState) => state.locations.countries || [])
   const cities = useSelector((state: RootState) => state.locations.cities || [])
-  const status = useSelector((state: RootState) => state.locations.status)
+  const statuses = useSelector((state: RootState) => state.locations.statuses)
   const request = useSelector((state: RootState) => state.jobs.request)
 
   // Local state for form fields
   const [formData, setFormData] = useState({
-    locationId: "",
+    locationId: 0,
     countryName: "",
     state: null as string | null,
     city: "",
@@ -48,7 +48,7 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
     } else if (request.location) {
       // Populate form with existing data if available
       setFormData({
-        locationId: request.location.locationId || "",
+        locationId: request.location.locationId || 0,
         countryName: request.location.countryName || "",
         state: request.location.state,
         city: request.location.city || "",
@@ -58,7 +58,7 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
     }
   }, [dispatch, request])
 
-  const isCitiesLoading = status === "loading"
+  const isCitiesLoading = statuses.fetching === "loading"
   const hasCities = cities.length > 0
   const hasLocationFilters =
     !!formData.countryName || !!formData.city || !!formData.state || !!formData.street || !!formData.houseNumber
@@ -81,7 +81,7 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
 
   const handleClearAll = () => {
     setFormData({
-      locationId: "",
+      locationId: 0,
       countryName: "",
       state: null,
       city: "",
@@ -111,7 +111,7 @@ export function LocationSelector({ onClearAll, onNext, onBack }: LocationSelecto
 
   useEffect(() => {
     if (formData.countryName) {
-      dispatch(fetchCities(formData.countryName))
+      dispatch(fetchCities({ country: formData.countryName }))
     }
   }, [formData.countryName, dispatch])
 

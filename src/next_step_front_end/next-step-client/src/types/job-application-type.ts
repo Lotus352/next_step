@@ -41,9 +41,21 @@ export default interface JobApplicationType {
     applicant: UserType
     jobId: number
     resumeUrl: string
-    score: string | ScoreData // Can be a string for backward compatibility or the new JSON structure
-    scoreMean?: number // Average score (now can be derived from score.score)
+    score: string | ScoreData
+    scoreMean?: number
     resumeContent: string | null
+    coverLetter: string
+    status: string | "PENDING"
+    appliedAt: string
+}
+
+export interface JobApplicationRequest {
+    userId: number
+    jobId: number
+    resumeUrl: string
+    resumeContent: string | null
+    score: string | ScoreData
+    scoreMean?: number
     coverLetter: string
     status: string | "PENDING"
     appliedAt: string

@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  Briefcase,
   Facebook,
   Twitter,
   Instagram,
@@ -9,7 +8,7 @@ import {
   Mail,
   Phone,
   MapPin,
-  Heart,
+  Heart, ArrowBigRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -74,7 +73,7 @@ export default function Footer() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-xl blur-sm opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
                 <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <Briefcase className="h-5 w-5 text-primary-foreground" />
+                  <ArrowBigRight className="h-5 w-5 text-primary-foreground" />
                   <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary-foreground/60 rounded-full animate-pulse" />
                 </div>
               </div>
@@ -93,7 +92,7 @@ export default function Footer() {
 
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6 font-medium">
               Connecting talented individuals with great companies. Find your dream job or the perfect candidate with
-              Next Step.
+              Next .Step.
             </p>
 
             {/* Contact Info */}
