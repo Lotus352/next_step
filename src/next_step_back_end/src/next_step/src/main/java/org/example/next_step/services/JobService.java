@@ -111,6 +111,15 @@ public class JobService {
         return jobs.map(job -> JobMapper.toDTO(job, candidateUsername));
     }
 
+    public void changeStatus(Long jobId, String status) {
+        Job job = jobRepo.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        job.setStatus(status);
+        job.setUpdatedAt(LocalDateTime.now());
+        jobRepo.save(job);
+    }
+
     /* ---------- commands ---------- */
 
     @Transactional

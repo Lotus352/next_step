@@ -5,15 +5,12 @@ import {
   Briefcase,
   Clock,
   BookmarkPlus,
-  Send,
   ExternalLink,
   Building2,
   Heart,
   Sparkles,
   Calendar,
-  Users,
   Star,
-  ArrowRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -76,9 +73,6 @@ export function JobCard({ job }: JobCardProps) {
     setNotification((prev) => ({ ...prev, isVisible: false }))
   }
 
-  const handleApply = () => {
-    // Implement your apply logic here
-  }
 
   return (
     <>
@@ -287,28 +281,7 @@ export function JobCard({ job }: JobCardProps) {
                 <ExternalLink className="h-4 w-4" />
                 <span className="hidden sm:inline">View Details</span>
               </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 rounded-full hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-105 border-border/50 font-medium"
-              >
-                <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Company</span>
-              </Button>
             </div>
-
-            <Button
-              onClick={handleApply}
-              className="gap-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-r from-primary to-primary/90 font-semibold relative overflow-hidden group/apply"
-            >
-              <Send className="h-4 w-4 transition-all duration-300 group-hover/apply:translate-x-1" />
-              <span>Apply Now</span>
-              <ArrowRight className="h-4 w-4 opacity-0 group-hover/apply:opacity-100 transition-all duration-300 -ml-2 group-hover/apply:ml-0" />
-
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover/apply:translate-x-[200%] transition-transform duration-700" />
-            </Button>
           </CardFooter>
         </Card>
       </motion.div>

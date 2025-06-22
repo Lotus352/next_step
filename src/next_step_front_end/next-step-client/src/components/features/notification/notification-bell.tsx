@@ -68,7 +68,7 @@ export default function NotificationBell() {
     }, [isAuthenticated, dispatch])
 
     const handleNotificationClick = () => {
-        navigate("/notifications")
+        navigate("/candidate/notifications")
         setIsDropdownOpen(false)
     }
 

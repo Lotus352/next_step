@@ -16,7 +16,6 @@ import {
   Building,
   Users,
   Sparkles,
-  Settings,
   LogOut,
   Shield,
   UserCog,
@@ -141,7 +140,7 @@ export default function Header() {
       items.push(
           { to: "/admin/dashboard", icon: Shield, label: "Admin Dashboard" },
           { to: "/admin/users", icon: UserCog, label: "Manage Users" },
-          { to: "/admin/settings", icon: Settings, label: "System Settings" },
+          { to: "/admin/manage-jobs", icon: Building, label: "Manage Jobs" },
       )
     }
 

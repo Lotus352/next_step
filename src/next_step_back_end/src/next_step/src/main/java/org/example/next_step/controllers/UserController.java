@@ -3,13 +3,18 @@ package org.example.next_step.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.next_step.dtos.requests.ChangePasswordRequest;
+import org.example.next_step.dtos.requests.UserFilterRequest;
 import org.example.next_step.dtos.requests.UserRequest;
 import org.example.next_step.dtos.responses.JobResponse;
 import org.example.next_step.dtos.responses.UserResponse;
 import org.example.next_step.security.JwtTokenProvider;
 import org.example.next_step.services.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +29,23 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @PostMapping("/filter")
+    public ResponseEntity<Page<UserResponse>> filterUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestBody UserFilterRequest filter
+    ) {
+        Sort.Direction direction = Sort.Direction.fromString(
+                StringUtils.hasText(filter.getSortDirection()) ? filter.getSortDirection() : "DESC"
+        );
+        String sortBy = StringUtils.hasText(filter.getSortBy()) ? filter.getSortBy() : "createdAt";
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<UserResponse> users = userService.filter(filter, pageable);
+        return ResponseEntity.ok(users);
+    }
+
 
     @GetMapping("/{username}")
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {

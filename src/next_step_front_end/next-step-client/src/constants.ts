@@ -1,5 +1,6 @@
 import type JobFilterType from "@/types/job-filter-type";
 import type JobApplicationFilterType from "@/types/job-application-filter-type";
+import type UserFilterType from "@/types/user-filter-type";
 
 export const DEFAULT_LEVEL_SIZE = 50;
 export const DEFAULT_SKILL_SIZE = 50;
@@ -59,5 +60,13 @@ export const DEFAULT_JOB_APPLICATION_FILTER : JobApplicationFilterType = {
   keyword: DEFAULT_KEYWORD,
   sortBy: DEFAULT_SORT_BY,
   sortDirection: DEFAULT_SORT_DIRECTION,
-}   
+}
 
+
+export const DEFAULT_USER_FILTER: UserFilterType = {
+  keyword: "",
+  role: "",
+  isDeleted: false,
+  sortBy: "createdAt",
+  sortDirection: "DESC",
+};

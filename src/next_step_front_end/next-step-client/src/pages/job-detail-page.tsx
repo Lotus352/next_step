@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import RelatedJobs from "@/components/features/job/related-jobs"
 import { useParams } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import type { AppDispatch } from "@/store/store"
@@ -89,9 +88,6 @@ export default function JobDetailPage() {
 
             {/* Company Location */}
             <CompanyLocation />
-
-            {/* Related Jobs */}
-            <RelatedJobs />
           </motion.div>
         </div>
       </div>

@@ -68,6 +68,34 @@ export function currencySymbols(currency: string) {
   }
 }
 
+export interface DebouncedFunction<T extends (...args: any[]) => any> {
+  (...args: Parameters<T>): void
+  cancel: () => void
+}
+
+export function debounce<T extends (...args: any[]) => any>(func: T, delay: number): DebouncedFunction<T> {
+  let timeoutId: NodeJS.Timeout | null = null
+
+  const debouncedFunction = ((...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
+    timeoutId = setTimeout(() => {
+      func(...args)
+    }, delay)
+  }) as DebouncedFunction<T>
+
+  debouncedFunction.cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      timeoutId = null
+    }
+  }
+
+  return debouncedFunction
+}
+
 export function formatDate(dateString: string) {
   if (!dateString) return "N/A";
   const date = new Date(dateString);

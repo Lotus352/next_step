@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.next_step.dtos.requests.JobApplicationFilterRequest;
 import org.example.next_step.dtos.responses.JobApplicationInformationResponse;
 import org.example.next_step.dtos.responses.JobApplicationResponse;
+import org.example.next_step.mappers.JobApplicationMapper;
 import org.example.next_step.models.JobApplication;
 import org.example.next_step.security.JwtTokenProvider;
 import org.example.next_step.services.JobApplicationService;
@@ -56,9 +57,9 @@ public class JobApplicationController {
 
         Optional<JobApplication> appOpt = service.getApplicationIfApplied(username, jobId);
         if (appOpt.isPresent()) {
-            return ResponseEntity.ok(appOpt.get());
+            return ResponseEntity.ok(JobApplicationMapper.toDTO(appOpt.get()));
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User has not applied for this job.");
+            return ResponseEntity.ok(null);
         }
     }
 
@@ -81,8 +82,8 @@ public class JobApplicationController {
     }
 
     @GetMapping("/{id}/can-withdraw")
-    public ResponseEntity<Boolean> canWithdraw(@PathVariable("id") Long jobId) {
-        boolean result = service.canWithdrawApplication(jobId);
+    public ResponseEntity<Boolean> canWithdraw(@PathVariable("id") Long applicationId) {
+        boolean result = service.canWithdrawApplication(applicationId);
         return ResponseEntity.ok(result);
     }
 

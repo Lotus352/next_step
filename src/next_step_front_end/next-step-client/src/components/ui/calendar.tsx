@@ -54,11 +54,15 @@ function Calendar({
                 day_hidden: "invisible",
                 ...classNames,
             }}
-
+            
             components={{
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 IconLeft: ({className, ...props}) => (
                     <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
                 ),
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 IconRight: ({className, ...props}) => (
                     <ChevronRight className={cn("h-4 w-4", className)} {...props} />
                 ),

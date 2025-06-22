@@ -3,7 +3,6 @@ import SalaryType from "@/types/salary-type.ts";
 import LocationType from "@/types/location-type.ts";
 import PostedBy from "@/types/post-py-type.ts";
 import ExperienceLevelType from "@/types/experience-level-type.ts";
-import { DEFAULT_STATUS } from "../constants";
 
 export default interface JobType {  
   jobId: number;
@@ -15,9 +14,9 @@ export default interface JobType {
   employmentType: string | null;
   jobUrl: string | null;
   remoteAllowed: boolean | null;
-  status: typeof DEFAULT_STATUS;
-  isDeleted: boolean | 0;
-  isFeatured: boolean | 0;
+  status: string;
+  isDeleted: boolean ;
+  isFeatured: boolean;
   interviewProcess: number | null;
   expiryDate: string | null;
   createdAt: string;
@@ -39,8 +38,8 @@ export interface JobRequest {
   employmentType: string | null;
   jobUrl: string | null;
   remoteAllowed: boolean | null;
-  isDeleted: boolean | 0;
-  isFeatured: boolean | 0;
+  isDeleted: boolean;
+  isFeatured: boolean;
   status: string;
   expiryDate: string | null;
   userId: number | null;

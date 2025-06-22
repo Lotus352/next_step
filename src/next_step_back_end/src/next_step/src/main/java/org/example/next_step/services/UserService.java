@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.example.next_step.dtos.requests.ChangePasswordRequest;
 import org.example.next_step.dtos.requests.RegisterRequest;
+import org.example.next_step.dtos.requests.UserFilterRequest;
 import org.example.next_step.dtos.requests.UserRequest;
 import org.example.next_step.dtos.responses.JobResponse;
 import org.example.next_step.dtos.responses.UserResponse;
@@ -21,8 +22,10 @@ import org.example.next_step.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -225,6 +228,25 @@ public class UserService {
         userRepo.save(user);
     }
 
+    @Transactional(readOnly = true)
+    public Page<UserResponse> filter(UserFilterRequest request, Pageable pageable) {
+        normalizeUserFilter(request);
+
+        Page<User> users = userRepo.findUsersByFilter(
+                request.getKeyword(),
+                request.getRole(),
+                request.getIsDeleted(),
+                pageable
+        );
+
+        return users.map(UserMapper::toDTO);
+    }
+
+    private void normalizeUserFilter(UserFilterRequest request) {
+        if ("all".equalsIgnoreCase(request.getRole())) {
+            request.setRole(null);
+        }
+    }
     /* ---------- helper ---------- */
 
     private String uploadToCloudinary(MultipartFile file) {

@@ -36,6 +36,7 @@ interface JobsState extends PageResp {
         fetchingEmploymentTypes: "idle" | "loading" | "failed" | "succeeded";
         fetchingSalaryRange: "idle" | "loading" | "failed" | "succeeded";
         togglingFavorite: "idle" | "loading" | "failed" | "succeeded";
+        changingStatus: "idle" | "loading" | "failed" | "succeeded";
     };
 
     salaryRange: {
@@ -67,6 +68,7 @@ const initialState: JobsState = {
         fetchingEmploymentTypes: "idle",
         fetchingSalaryRange: "idle",
         togglingFavorite: "idle",
+        changingStatus: "idle",
     },
 
     salaryRange: {
@@ -106,7 +108,7 @@ export const fetchEmploymentTypes = createAsyncThunk<string[]>(
 
 export const filterJobs = createAsyncThunk<
     PageResp,
-    { page?: number; size?: number; employerId?: number; filter: JobFilterType }
+    { page?: number; size?: number; filter: JobFilterType }
 >("jobs/filter", async ({page = DEFAULT_PAGE, size = DEFAULT_JOB_SIZE, filter}) => {
     const {data} = await axiosClient.post("/api/jobs/filter", filter, {
         params: {page, size},
@@ -155,6 +157,17 @@ export const fetchSalaryRange = createAsyncThunk<
     const {data} = await axiosClient.get("/api/jobs/salary-max-min");
     return data;
 });
+
+export const changeJobStatus = createAsyncThunk<
+    { id: number; status: string },
+    { id: number; status: string }
+>("jobs/changeStatus", async ({ id, status }) => {
+    await axiosClient.put(`/api/jobs/${id}/status`, null, {
+        params: { status },
+    });
+    return { id, status };
+});
+
 
 /* ---------- Slice ---------- */
 const jobsSlice = createSlice({
@@ -346,6 +359,30 @@ const jobsSlice = createSlice({
             .addCase(fetchSalaryRange.rejected, (s) => {
                 s.statuses.fetchingSalaryRange = "failed";
                 s.error = "Failed to fetch salary range";
+            })
+
+            .addCase(changeJobStatus.pending, (s) => {
+                s.statuses.changingStatus = "loading";
+            })
+            .addCase(changeJobStatus.fulfilled, (s, a) => {
+                s.statuses.changingStatus = "succeeded";
+                const { id, status } = a.payload;
+
+                s.content = s.content.map((job) =>
+                    job.jobId === id ? { ...job, status } : job
+                );
+
+                if (s.selected?.jobId === id) {
+                    s.selected = { ...s.selected, status };
+                }
+
+                s.featured = s.featured.map((job) =>
+                    job.jobId === id ? { ...job, status } : job
+                );
+            })
+            .addCase(changeJobStatus.rejected, (s) => {
+                s.statuses.changingStatus = "failed";
+                s.error = "Failed to change job status";
             });
     },
 });

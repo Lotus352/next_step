@@ -98,6 +98,9 @@ public class JobApplicationService {
             Job job = jobRepo.findById(jobId)
                     .orElseThrow(() -> new IllegalArgumentException("Job not found"));
 
+            User candidate = userRepo.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
             String jdJson = buildJobDescriptionJson(job);
             String scoreJson = calculateMatchingScore(resumeContent, jdJson);
 
@@ -107,7 +110,10 @@ public class JobApplicationService {
             // Send notification to employer
             sendNotificationToEmployer(userId, job);
 
-            sendEmailToEmployer(userId, job, resumeUrl, coverLetter, request);
+            if (candidate.getEmail() != null && !candidate.getEmail().isBlank() && candidate.getIsSend()) {
+                // Send email to employer with application details
+                sendEmailToEmployer(candidate, job, resumeUrl, coverLetter, request);
+            }
 
             return resumeUrl;
         } catch (Exception e) {
@@ -157,6 +163,7 @@ public class JobApplicationService {
         LocalDateTime appliedAt = application.getAppliedAt();
         long minutes = Duration.between(appliedAt, LocalDateTime.now()).toMinutes();
 
+        System.out.println(minutes <= 30);
         return minutes <= 30;
     }
 
@@ -399,11 +406,8 @@ public class JobApplicationService {
         }
     }
 
-
-    private void sendEmailToEmployer(Long candidateId, Job job, String resumeUrl, String coverLetter, HttpServletRequest request) {
-        User candidate = userRepo.findById(candidateId)
-                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
-
+    private void sendEmailToEmployer(User candidate, Job job, String resumeUrl, String coverLetter, HttpServletRequest request) {
+        // Build email content
         String domain = request.getScheme() + "://" + request.getServerName() +
                 (request.getServerPort() == 80 || request.getServerPort() == 443 ? "" : ":" + request.getServerPort());
 

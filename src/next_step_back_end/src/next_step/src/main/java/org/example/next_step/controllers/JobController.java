@@ -69,6 +69,18 @@ public class JobController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> changeJobStatus(@PathVariable Long id,
+                                                @RequestParam String status,
+                                                HttpServletRequest request) {
+        String username = getUsernameRequest(request);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        service.changeStatus(id, status);
+        return ResponseEntity.ok().build();
+    }
+
     /* ---------- commands ---------- */
 
     @PostMapping

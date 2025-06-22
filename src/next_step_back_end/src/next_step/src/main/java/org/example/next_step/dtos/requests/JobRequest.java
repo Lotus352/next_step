@@ -1,5 +1,6 @@
 package org.example.next_step.dtos.requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,10 @@ public class JobRequest {
     private Boolean isDeleted;
     private Boolean isFeatured;
     private String status;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;
+
     private Long userId;
     private Set<Long> experienceLevelIds;
     private Set<Long> skillIds;
