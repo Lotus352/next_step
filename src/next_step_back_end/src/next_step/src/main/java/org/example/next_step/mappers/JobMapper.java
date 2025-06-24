@@ -37,6 +37,7 @@ public class JobMapper {
                 .experienceLevels(job.getExperienceLevels() != null ? job.getExperienceLevels().stream().map(ExperienceLevelMapper::toDTO).collect(Collectors.toSet()) : null)
                 .benefits(job.getBenefits())
                 .isFavorite(username != null ? job.isFavorite(username) : false)
+                .appliedCount(job.getAppliedCount())
                 .build();
     }
 

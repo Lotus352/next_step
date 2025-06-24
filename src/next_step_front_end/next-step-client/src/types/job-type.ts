@@ -26,6 +26,7 @@ export default interface JobType {
   experienceLevels: ExperienceLevelType[];
   salary: SalaryType;
   isFavorite: boolean;
+  appliedCount: number;
 }
 
 export interface JobRequest {

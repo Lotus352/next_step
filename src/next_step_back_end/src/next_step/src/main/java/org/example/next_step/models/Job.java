@@ -2,6 +2,7 @@ package org.example.next_step.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -97,6 +98,9 @@ public class Job {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     private Set<JobApplication> applications;
 
+    @Formula("(SELECT COUNT(*) FROM job_applications ja WHERE ja.job_id = job_id)")
+    private Integer appliedCount;
+
     @ManyToMany
     @JoinTable(
             name = "user_job_favorites",
@@ -122,4 +126,6 @@ public class Job {
     public Boolean isFavorite(String username) {
         return favoriteUsers.stream().anyMatch(user -> user.getUsername().equals(username));
     }
+
+
 }

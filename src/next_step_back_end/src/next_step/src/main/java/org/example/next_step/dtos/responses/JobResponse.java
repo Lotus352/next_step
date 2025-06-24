@@ -25,6 +25,7 @@ public class JobResponse {
     private Boolean isFeatured;
     private Integer interviewProcess;
     private String benefits;
+    private Integer appliedCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;

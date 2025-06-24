@@ -243,10 +243,14 @@ public class UserService {
     }
 
     private void normalizeUserFilter(UserFilterRequest request) {
+        if (!StringUtils.hasText(request.getKeyword())) request.setKeyword(null);
+        if (!StringUtils.hasText(request.getRole())) request.setRole(null);
+
         if ("all".equalsIgnoreCase(request.getRole())) {
             request.setRole(null);
         }
     }
+
     /* ---------- helper ---------- */
 
     private String uploadToCloudinary(MultipartFile file) {

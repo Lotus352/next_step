@@ -132,14 +132,16 @@ export default function Header() {
       items.push(
           { to: "/employer/post-job", icon: PlusCircle, label: "Post a Job" },
           { to: "/employer/manage-jobs", icon: Building, label: "Manage Jobs" },
+          { to: "/employer/manage-users", icon: UserCog, label: "Manage Users" },
           { to: "/employer/candidates", icon: Users, label: "Browse Candidates" },
+
       )
     }
 
     if (hasRole("ADMIN")) {
       items.push(
           { to: "/admin/dashboard", icon: Shield, label: "Admin Dashboard" },
-          { to: "/admin/users", icon: UserCog, label: "Manage Users" },
+          { to: "/admin/manage-users", icon: UserCog, label: "Manage Users" },
           { to: "/admin/manage-jobs", icon: Building, label: "Manage Jobs" },
       )
     }

@@ -20,7 +20,8 @@ import SignInPage from "@/pages/sign-in-page.tsx";
 import SignupPage from "@/pages/sign-up-page.tsx";
 import FavoriteJobsPage from "@/pages/favorite-jobs-page.tsx";
 import NotificationPage from "@/pages/notification-page.tsx";
-import JobManagementPage from "@/pages/job-management-page-route.tsx";
+import JobManagementPageRoute from "@/pages/job-management-page-route.tsx";
+import UserManagementPageRoute from "@/pages/user-management-page-route.tsx";
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{
@@ -148,7 +149,7 @@ function App() {
                 path="/employer/manage-jobs"
                 element={
                   <ProtectedRoute allowedRoles={["employer"]}>
-                    <JobManagementPage />
+                    <JobManagementPageRoute />
                   </ProtectedRoute>
                 }
             />
@@ -157,10 +158,30 @@ function App() {
                 path="/admin/manage-jobs"
                 element={
                   <ProtectedRoute allowedRoles={["admin"]}>
-                    <JobManagementPage />
+                    <JobManagementPageRoute />
                   </ProtectedRoute>
                 }
             />
+
+              <Route
+                  path="/employer/manage-users"
+                  element={
+                      <ProtectedRoute allowedRoles={["employer"]}>
+                          <UserManagementPageRoute />
+                      </ProtectedRoute>
+                  }
+              />
+
+              <Route
+                  path="/admin/manage-users"
+                  element={
+                      <ProtectedRoute allowedRoles={["admin"]}>
+                          <UserManagementPageRoute />
+                      </ProtectedRoute>
+                  }
+              />
+
+
 
             <Route
               path="*"

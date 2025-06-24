@@ -1,7 +1,6 @@
 import CompanyType from "@/types/company-type.ts";
 import SkillType from "@/types/skill-type.ts";
 import RoleType from "@/types/role-type.ts";
-import { DEFAULT_STATUS } from "@/constants";
 import ExperienceLevelType from "@/types/experience-level-type.ts";
 
 export default interface UserType {
@@ -16,7 +15,7 @@ export default interface UserType {
     nationality: string | null;
     phoneNumber: string;
     isSend: boolean;
-    status: string | typeof DEFAULT_STATUS;
+    status: string;
     company: CompanyType | null;
     experiences: UserExperienceType[] | null;
     skills: SkillType[];

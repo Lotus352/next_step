@@ -2,6 +2,7 @@ import type JobFilterType from "@/types/job-filter-type";
 import type JobApplicationFilterType from "@/types/job-application-filter-type";
 import type UserFilterType from "@/types/user-filter-type";
 
+export const DEFAULT_USER_SIZE = 10
 export const DEFAULT_LEVEL_SIZE = 50;
 export const DEFAULT_SKILL_SIZE = 50;
 export const DEFAULT_INDUSTRY_SIZE = 50;

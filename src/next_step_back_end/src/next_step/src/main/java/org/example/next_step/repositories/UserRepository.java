@@ -34,17 +34,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("""
                 SELECT DISTINCT u FROM User u
                 LEFT JOIN u.roles r
-                WHERE (:keyword IS NULL OR :keyword = '' OR 
+                WHERE (:keyword IS NULL OR :keyword = '' OR
                        LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-                       LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(u.email)    LIKE LOWER(CONCAT('%', :keyword, '%')) OR
                        LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')))
-                  AND (:role IS NULL OR r.roleName = :role)
+                  AND (:role IS NULL OR :role = '' OR r.roleName = :role)
                   AND (:isDeleted IS NULL OR u.isDeleted = :isDeleted)
             """)
-    Page<User> findUsersByFilter(
-            @Param("keyword") String keyword,
-            @Param("role") String role,
-            @Param("isDeleted") Boolean isDeleted,
-            Pageable pageable
-    );
+    Page<User> findUsersByFilter(@Param("keyword") String keyword, @Param("role") String role, @Param("isDeleted") Boolean isDeleted, Pageable pageable);
+
 }

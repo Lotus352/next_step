@@ -1,470 +1,382 @@
 "use client"
 
+import { useState } from "react"
+import { useDispatch } from "react-redux"
 import { motion, AnimatePresence } from "framer-motion"
-import {
-  Briefcase,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Star,
-  Eye,
-  EyeOff,
-  Building2,
-  ArrowUpDown,
-  ChevronUp,
-  ChevronDown,
-  CheckCircle,
-  XCircle,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Pagination } from "@/components/pagination"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Switch } from "@/components/ui/switch"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Checkbox } from "@/components/ui/checkbox"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { MoreHorizontal, Edit, Trash2, Eye, Calendar, Users, CheckCircle, XCircle, TableIcon } from "lucide-react"
 import type JobType from "@/types/job-type"
-import { formatDate, formatTextEnum, formatSalary } from "@/lib/utils"
+import type { AppDispatch } from "@/store/store"
+import { deleteJob, changeJobStatus } from "@/store/slices/jobs-slice"
+import { formatDate, formatTextEnum } from "@/lib/utils"
+import Loading from "@/components/loading"
+
+
+// Import the new dialog components at the top
+import { JobViewDialog } from "./job-view-dialog"
+import { JobEditDialog } from "./job-edit-dialog"
 
 interface JobManagementTableProps {
   jobs: JobType[]
-  isLoading: boolean
-  isAdmin: boolean
-  selectedRows: Set<number>
-  hiddenJobs: Set<number>
-  filter: any
-  searchQuery: string
-  isChangingStatus: boolean
-  onEditJob: (job: JobType) => void
-  onDeleteJob: (jobId: number) => void
-  onToggleFeatured: (job: JobType) => void
-  onToggleStatus: (job: JobType) => void
-  onToggleVisibility: (jobId: number) => void
-  onRowSelect: (jobId: number, checked: boolean) => void
-  onSelectAll: (checked: boolean) => void
-  onSort: (sortBy: string) => void
-}
-
-// Job status type definition
-type JobStatus = "OPEN" | "CLOSED"
-
-// Helper function to format job status
-const formatJobStatus = (status: string): JobStatus => {
-  const normalizedStatus = status?.toUpperCase()
-  if (normalizedStatus === "CLOSED" || normalizedStatus === "INACTIVE" || normalizedStatus === "PAUSED") {
-    return "CLOSED"
-  }
-  return "OPEN"
-}
-
-// Helper function to get status badge variant and icon
-const getStatusDisplay = (status: JobStatus) => {
-  switch (status) {
-    case "OPEN":
-      return {
-        variant: "default" as const,
-        icon: CheckCircle,
-        color: "text-green-600",
-        bgColor: "bg-green-100",
-        label: "Open",
-      }
-    case "CLOSED":
-      return {
-        variant: "secondary" as const,
-        icon: XCircle,
-        color: "text-red-600",
-        bgColor: "bg-red-100",
-        label: "Closed",
-      }
-    default:
-      return {
-        variant: "secondary" as const,
-        icon: CheckCircle,
-        color: "text-green-600",
-        bgColor: "bg-green-100",
-        label: "Open",
-      }
-  }
+  loading: boolean
+  currentPage: number
+  totalPages: number
+  totalElements: number
+  pageSize: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
+  userRole: "admin" | "employer"
 }
 
 export function JobManagementTable({
                                      jobs,
-                                     isLoading,
-                                     isAdmin,
-                                     selectedRows,
-                                     hiddenJobs,
-                                     filter,
-                                     searchQuery,
-                                     isChangingStatus,
-                                     onEditJob,
-                                     onDeleteJob,
-                                     onToggleFeatured,
-                                     onToggleStatus,
-                                     onToggleVisibility,
-                                     onRowSelect,
-                                     onSelectAll,
-                                     onSort,
+                                     loading,
+                                     currentPage,
+                                     totalPages,
+                                     totalElements,
+                                     pageSize,
+                                     onPageChange,
+                                     onPageSizeChange,
+                                     userRole,
                                    }: JobManagementTableProps) {
-  const visibleJobs = jobs.filter((job) => !hiddenJobs.has(job.jobId))
+  const dispatch = useDispatch<AppDispatch>()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedJobId, setSelectedJobId] = useState<number | null>(null)
 
-  // Get sort icon
-  const getSortIcon = (column: string) => {
-    if (filter?.sortBy !== column) {
-      return <ArrowUpDown className="h-4 w-4 opacity-50" />
+  // Add state for dialogs after the existing state declarations
+  const [viewDialogOpen, setViewDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [selectedJob, setSelectedJob] = useState<JobType | null>(null)
+
+  const handleDelete = async () => {
+    if (selectedJobId) {
+      await dispatch(deleteJob({ id: selectedJobId }))
+      setDeleteDialogOpen(false)
+      setSelectedJobId(null)
     }
-    return filter.sortDirection === "ASC" ? (
-        <ChevronUp className="h-4 w-4 text-primary" />
-    ) : (
-        <ChevronDown className="h-4 w-4 text-primary" />
+  }
+
+  const handleStatusChange = async (jobId: number, newStatus: string) => {
+    await dispatch(changeJobStatus({ id: jobId, status: newStatus }))
+  }
+
+  // Add handlers for opening dialogs
+  const handleViewJob = (job: JobType) => {
+    setSelectedJob(job)
+    setViewDialogOpen(true)
+  }
+
+  const handleEditJob = (job: JobType) => {
+    setSelectedJob(job)
+    setEditDialogOpen(true)
+  }
+
+  // Update the getStatusBadge function to handle OPEN/CLOSE status
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      OPEN: {
+        variant: "default" as const,
+        icon: CheckCircle,
+        className: "bg-green-100 text-green-700 border-green-300",
+      },
+      CLOSE: {
+        variant: "secondary" as const,
+        icon: XCircle,
+        className: "bg-red-100 text-red-700 border-red-300",
+      },
+    }
+
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.OPEN
+    const Icon = config.icon
+
+    return (
+        <Badge variant={config.variant} className={`${config.className} flex items-center gap-1 font-medium`}>
+          <Icon className="h-3 w-3" />
+          {status}
+        </Badge>
+    )
+  }
+
+  // Function to get applications count badge
+  const getApplicationsBadge = (count: number) => {
+    let badgeClass = "bg-gray-100 text-gray-700 border-gray-300"
+
+    if (count >= 50) {
+      badgeClass = "bg-red-100 text-red-700 border-red-300"
+    } else if (count >= 20) {
+      badgeClass = "bg-orange-100 text-orange-700 border-orange-300"
+    } else if (count >= 10) {
+      badgeClass = "bg-yellow-100 text-yellow-700 border-yellow-300"
+    } else if (count >= 5) {
+      badgeClass = "bg-blue-100 text-blue-700 border-blue-300"
+    } else if (count > 0) {
+      badgeClass = "bg-green-100 text-green-700 border-green-300"
+    }
+
+    return (
+        <Badge variant="outline" className={`${badgeClass} flex items-center gap-1 font-medium`}>
+          <Users className="h-3 w-3" />
+          {count} {count === 1 ? "application" : "applications"}
+        </Badge>
+    )
+  }
+
+  if (loading) {
+    return <Loading />
+  }
+
+  if (jobs.length === 0) {
+    return (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
+          <Card className="border-border/30 bg-background/80 backdrop-blur-sm shadow-lg">
+            <CardContent className="p-12">
+              <TableIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No jobs found</h3>
+              <p className="text-muted-foreground text-sm">There are currently no job listings matching your criteria.</p>
+            </CardContent>
+          </Card>
+        </motion.div>
     )
   }
 
   return (
-      <Card className="border-border/30 bg-background/80 backdrop-blur-sm shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent border-border/30">
-                <TableHead className="w-12">
-                  <Checkbox
-                      checked={selectedRows.size === visibleJobs.length && visibleJobs.length > 0}
-                      onCheckedChange={onSelectAll}
-                      className="border-border/50"
-                  />
-                </TableHead>
-                <TableHead>
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 font-semibold hover:bg-transparent hover:text-primary"
-                      onClick={() => onSort("title")}
-                  >
-                  <span className="flex items-center gap-2">
-                    Job Title
-                    {getSortIcon("title")}
-                  </span>
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 font-semibold hover:bg-transparent hover:text-primary"
-                      onClick={() => onSort("postedBy")}
-                  >
-                  <span className="flex items-center gap-2">
-                    Company
-                    {getSortIcon("postedBy")}
-                  </span>
-                  </Button>
-                </TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 font-semibold hover:bg-transparent hover:text-primary"
-                      onClick={() => onSort("employmentType")}
-                  >
-                  <span className="flex items-center gap-2">
-                    Type
-                    {getSortIcon("employmentType")}
-                  </span>
-                  </Button>
-                </TableHead>
-                <TableHead>Salary</TableHead>
-                <TableHead>
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 font-semibold hover:bg-transparent hover:text-primary"
-                      onClick={() => onSort("status")}
-                  >
-                  <span className="flex items-center gap-2">
-                    Status
-                    {getSortIcon("status")}
-                  </span>
-                  </Button>
-                </TableHead>
-                {isAdmin && <TableHead className="text-center">Featured</TableHead>}
-                <TableHead>
-                  <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 font-semibold hover:bg-transparent hover:text-primary"
-                      onClick={() => onSort("createdAt")}
-                  >
-                  <span className="flex items-center gap-2">
-                    Posted
-                    {getSortIcon("createdAt")}
-                  </span>
-                  </Button>
-                </TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                  Array.from({ length: 5 }).map((_, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton className="h-4 w-4" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-32" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-24" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-16" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-16" />
-                        </TableCell>
-                        {isAdmin && (
-                            <TableCell>
-                              <Skeleton className="h-4 w-8" />
-                            </TableCell>
-                        )}
-                        <TableCell>
-                          <Skeleton className="h-4 w-16" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-4" />
-                        </TableCell>
-                      </TableRow>
-                  ))
-              ) : visibleJobs.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={isAdmin ? 10 : 9} className="h-32 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-3">
-                        <Briefcase className="h-8 w-8 text-muted-foreground" />
-                        <div className="space-y-1">
-                          <h3 className="font-semibold">No jobs found</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {searchQuery ? "No jobs match your search criteria." : "You haven't posted any jobs yet."}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-              ) : (
-                  <AnimatePresence>
-                    {visibleJobs.map((job, index) => {
-                      const jobStatus = formatJobStatus(job.status)
-                      const statusDisplay = getStatusDisplay(jobStatus)
+      <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-6"
+      >
+        <Card className="border-border/30 bg-background/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500">
+          <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-transparent border-b border-border/30">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <TableIcon className="h-4 w-4 text-primary" />
+              </div>
+              <CardTitle className="text-lg font-bold">Job Listings</CardTitle>
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                {totalElements} jobs
+              </Badge>
+            </div>
+          </CardHeader>
 
-                      return (
-                          <motion.tr
-                              key={job.jobId}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -20 }}
-                              transition={{ duration: 0.3, delay: index * 0.05 }}
-                              className={`group hover:bg-muted/30 transition-all duration-200 cursor-pointer border-border/30 ${
-                                  selectedRows.has(job.jobId) ? "bg-primary/5" : ""
-                              } ${hiddenJobs.has(job.jobId) ? "opacity-50" : ""}`}
-                              onClick={() => onEditJob(job)}
-                          >
-                            <TableCell onClick={(e) => e.stopPropagation()}>
-                              <Checkbox
-                                  checked={selectedRows.has(job.jobId)}
-                                  onCheckedChange={(checked) => onRowSelect(job.jobId, checked as boolean)}
-                                  className="border-border/50"
-                              />
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                            <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
-                              {job.title}
-                            </span>
-                                  {job.isFeatured && (
-                                      <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs">
-                                        <Star className="h-3 w-3 mr-1 fill-current" />
-                                        Featured
-                                      </Badge>
-                                  )}
-                                </div>
-                                <div className="flex flex-wrap gap-1">
-                                  {job.skills.slice(0, 2).map((skill) => (
-                                      <Badge
-                                          key={skill.skillId}
-                                          variant="outline"
-                                          className="text-xs bg-primary/5 border-primary/20"
-                                      >
-                                        {skill.skillName}
-                                      </Badge>
-                                  ))}
-                                  {job.skills.length > 2 && (
-                                      <Badge variant="outline" className="text-xs border-dashed">
-                                        +{job.skills.length - 2}
-                                      </Badge>
-                                  )}
-                                </div>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/30 hover:bg-muted/30">
+                    <TableHead className="font-semibold text-foreground">Job Details</TableHead>
+                    <TableHead className="font-semibold text-foreground">Company</TableHead>
+                    <TableHead className="font-semibold text-foreground">Employment Type</TableHead>
+                    <TableHead className="font-semibold text-foreground">Applications</TableHead>
+                    <TableHead className="font-semibold text-foreground">Status</TableHead>
+                    <TableHead className="font-semibold text-foreground">Posted</TableHead>
+                    <TableHead className="font-semibold text-foreground text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <AnimatePresence>
+                    {jobs.map((job, index) => (
+                        <motion.tr
+                            key={job.jobId}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="border-border/30 hover:bg-muted/20 transition-all duration-300 group"
+                        >
+                          <TableCell className="py-4">
+                            <div className="space-y-1">
+                              <div className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
+                                {job.title}
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Building2 className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">{job.postedBy.company.name}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {job.location ? (
-                                  <div className="text-sm">
-                                    {job.location.city}, {job.location.countryName}
-                                  </div>
-                              ) : (
-                                  <span className="text-muted-foreground">Remote</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="secondary" className="text-xs">
-                                {formatTextEnum(job.employmentType || "FULL_TIME")}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {job.salary && (
-                                  <div className="text-sm font-medium">
-                                    {formatSalary(job.salary.minSalary, job.salary.maxSalary, job.salary.currency)}
+                              <div className="text-sm text-muted-foreground line-clamp-2">{job.shortDescription}</div>
+                              {job.skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {job.skills.slice(0, 2).map((skill) => (
+                                        <Badge
+                                            key={skill.skillId}
+                                            variant="outline"
+                                            className="text-xs bg-primary/5 border-primary/20 text-primary"
+                                        >
+                                          {skill.skillName}
+                                        </Badge>
+                                    ))}
+                                    {job.skills.length > 2 && (
+                                        <Badge variant="outline" className="text-xs">
+                                          +{job.skills.length - 2}
+                                        </Badge>
+                                    )}
                                   </div>
                               )}
-                            </TableCell>
-                            <TableCell onClick={(e) => e.stopPropagation()}>
-                              <div className="flex items-center gap-2">
-                                <Badge
-                                    variant={statusDisplay.variant}
-                                    className={`text-xs flex items-center gap-1 ${
-                                        jobStatus === "OPEN"
-                                            ? "bg-green-100 text-green-700 border-green-300"
-                                            : "bg-red-100 text-red-700 border-red-300"
-                                    }`}
-                                >
-                                  <statusDisplay.icon className="h-3 w-3" />
-                                  {statusDisplay.label}
-                                </Badge>
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="py-4">
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8 rounded-lg">
+                                <AvatarImage src={job.postedBy.company.logoUrl || ""} alt={job.postedBy.company.name} />
+                                <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs rounded-lg">
+                                  {job.postedBy.company.name?.charAt(0) || "C"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium text-sm text-foreground">{job.postedBy.company.name}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {job.postedBy.username || job.postedBy.email}
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="py-4">
+                            <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-medium">
+                              {formatTextEnum(job.employmentType || "FULL_TIME")}
+                            </Badge>
+                          </TableCell>
+
+                          <TableCell className="py-4">{getApplicationsBadge(job.appliedCount)}</TableCell>
+
+                          <TableCell className="py-4">{getStatusBadge(job.status)}</TableCell>
+
+                          <TableCell className="py-4">
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(job.createdAt)}
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="py-4 text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-6 w-6 p-0 hover:bg-primary/10"
-                                    onClick={() => onToggleStatus(job)}
-                                    disabled={isChangingStatus}
-                                    title={`Change to ${jobStatus === "OPEN" ? "Closed" : "Open"}`}
+                                    className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                                 >
-                                  {isChangingStatus ? (
-                                      <motion.div
-                                          animate={{ rotate: 360 }}
-                                          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                                      >
-                                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
-                                      </motion.div>
-                                  ) : jobStatus === "OPEN" ? (
-                                      <XCircle className="h-3 w-3 text-red-600" />
-                                  ) : (
-                                      <CheckCircle className="h-3 w-3 text-green-600" />
-                                  )}
+                                  <MoreHorizontal className="h-4 w-4" />
                                 </Button>
-                              </div>
-                            </TableCell>
-                            {isAdmin && (
-                                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                                  <Switch checked={Boolean(job.isFeatured)} onCheckedChange={() => onToggleFeatured(job)} />
-                                </TableCell>
-                            )}
-                            <TableCell className="text-sm text-muted-foreground">{formatDate(job.createdAt)}</TableCell>
-                            <TableCell onClick={(e) => e.stopPropagation()}>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-300"
-                                  >
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48">
-                                  <DropdownMenuItem onClick={() => onEditJob(job)} className="gap-2">
-                                    <Edit className="h-4 w-4" />
-                                    Edit Job
-                                  </DropdownMenuItem>
-
-                                  <DropdownMenuItem
-                                      onClick={() => onToggleStatus(job)}
-                                      className="gap-2"
-                                      disabled={isChangingStatus}
-                                  >
-                                    {isChangingStatus ? (
-                                        <motion.div
-                                            animate={{ rotate: 360 }}
-                                            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                                        >
-                                          <ArrowUpDown className="h-4 w-4" />
-                                        </motion.div>
-                                    ) : jobStatus === "OPEN" ? (
-                                        <>
-                                          <XCircle className="h-4 w-4" />
-                                          Close Job
-                                        </>
-                                    ) : (
-                                        <>
-                                          <CheckCircle className="h-4 w-4" />
-                                          Open Job
-                                        </>
-                                    )}
-                                  </DropdownMenuItem>
-
-                                  {isAdmin && (
-                                      <>
-                                        <DropdownMenuItem onClick={() => onToggleFeatured(job)} className="gap-2">
-                                          <Star className="h-4 w-4" />
-                                          {job.isFeatured ? "Remove Featured" : "Make Featured"}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => onToggleVisibility(job.jobId)} className="gap-2">
-                                          {hiddenJobs.has(job.jobId) ? (
-                                              <Eye className="h-4 w-4" />
-                                          ) : (
-                                              <EyeOff className="h-4 w-4" />
-                                          )}
-                                          {hiddenJobs.has(job.jobId) ? "Show Job" : "Hide Job"}
-                                        </DropdownMenuItem>
-                                      </>
-                                  )}
-
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                      onClick={() => onDeleteJob(job.jobId)}
-                                      className="gap-2 text-destructive hover:text-destructive"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                    Delete Job
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </motion.tr>
-                      )
-                    })}
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => handleViewJob(job)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => handleEditJob(job)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                  Edit Job
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                {job.status === "OPEN" ? (
+                                    <DropdownMenuItem
+                                        className="flex items-center gap-2 hover:bg-red-50 hover:text-red-700"
+                                        onClick={() => handleStatusChange(job.jobId, "CLOSE")}
+                                    >
+                                      <XCircle className="h-4 w-4" />
+                                      Close Job
+                                    </DropdownMenuItem>
+                                ) : (
+                                    <DropdownMenuItem
+                                        className="flex items-center gap-2 hover:bg-green-50 hover:text-green-700"
+                                        onClick={() => handleStatusChange(job.jobId, "OPEN")}
+                                    >
+                                      <CheckCircle className="h-4 w-4" />
+                                      Open Job
+                                    </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 hover:bg-red-50 hover:text-red-700"
+                                    onClick={() => {
+                                      setSelectedJobId(job.jobId)
+                                      setDeleteDialogOpen(true)
+                                    }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Delete Job
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                    ))}
                   </AnimatePresence>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Pagination */}
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalElements={totalElements}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+            showPageSizeSelector={true}
+            pageSizeOptions={[5, 10, 20, 50]}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the job posting and remove all associated data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                Delete Job
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Add the dialog components before the closing motion.div tag */}
+        <JobViewDialog
+            job={selectedJob}
+            open={viewDialogOpen}
+            onOpenChange={setViewDialogOpen}
+            onEdit={() => {
+              setViewDialogOpen(false)
+              setEditDialogOpen(true)
+            }}
+            userRole={userRole}
+        />
+
+        <JobEditDialog job={selectedJob} open={editDialogOpen} onOpenChange={setEditDialogOpen} userRole={userRole} />
+      </motion.div>
   )
 }
