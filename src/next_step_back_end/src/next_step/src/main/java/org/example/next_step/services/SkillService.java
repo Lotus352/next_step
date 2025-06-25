@@ -17,9 +17,14 @@ public class SkillService {
     private final SkillRepository repo;
 
     @Transactional(readOnly = true)
-    public Page<SkillResponse> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("skillName"));
-        return repo.findAll(pageable).map(SkillMapper::toDTO);
+    public Page<SkillResponse> findAll(int page, int size, String key) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("skillId"));
+
+        Page<Skill> skills = key == null || key.isBlank()
+                ? repo.findAll(pageable)
+                : repo.searchByKey(key, pageable);
+
+        return skills.map(SkillMapper::toDTO);
     }
 
     @Transactional(readOnly = true)

@@ -119,7 +119,7 @@ public class Job {
             inverseJoinColumns = @JoinColumn(name = "certification_id"))
     private Set<Certification> certifications;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<JobCertification> jobCertifications;
 
 

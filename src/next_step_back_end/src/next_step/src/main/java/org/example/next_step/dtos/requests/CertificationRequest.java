@@ -12,5 +12,5 @@ import lombok.*;
 public class CertificationRequest {
     @NotBlank
     @Size(max = 45)
-    private String certificationsName;
+    private String certificationName;
 }

@@ -25,13 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -229,13 +225,25 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> filter(UserFilterRequest request, Pageable pageable) {
+    public Page<UserResponse> filter(UserFilterRequest request, Pageable pageable, String username) {
+
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        final Long companyId;
+        final boolean isAdmin;
+
+        Set<Role> roles = user.getRoles();
+        companyId = roles.stream().anyMatch(r -> "EMPLOYER".equals(r.getRoleName())) ? user.getCompany().getCompanyId() : null;
+        isAdmin = roles.stream().anyMatch(r -> "ADMIN".equals(r.getRoleName()));
+
         normalizeUserFilter(request);
 
         Page<User> users = userRepo.findUsersByFilter(
                 request.getKeyword(),
                 request.getRole(),
                 request.getIsDeleted(),
+                isAdmin ? null : companyId,
                 pageable
         );
 
@@ -251,12 +259,24 @@ public class UserService {
         }
     }
 
+    public UserResponse changeStatus(Long id, Status status) {
+        try {
+            User user = userRepo.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+            user.setStatus(status);
+            userRepo.save(user);
+            return UserMapper.toDTO(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to change user status: " + e.getMessage(), e);
+        }
+    }
+
     /* ---------- helper ---------- */
 
     private String uploadToCloudinary(MultipartFile file) {
         try {
             if (file == null || file.isEmpty()) throw new IllegalArgumentException("File must not be empty.");
-            String original = file.getOriginalFilename().toLowerCase();
+            String original = Objects.requireNonNull(file.getOriginalFilename()).toLowerCase();
             byte[] bytes = file.getBytes();
             String ext = original.substring(original.lastIndexOf('.'));
             String name = "file_" + UUID.randomUUID() + ext;

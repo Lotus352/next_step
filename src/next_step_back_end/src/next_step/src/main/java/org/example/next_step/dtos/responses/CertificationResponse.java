@@ -9,5 +9,5 @@ import lombok.*;
 @Builder
 public class CertificationResponse {
     private Long certificationId;
-    private String certificationsName;
+    private String certificationName;
 }

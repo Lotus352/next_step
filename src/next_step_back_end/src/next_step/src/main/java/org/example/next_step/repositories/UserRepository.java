@@ -40,7 +40,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
                        LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')))
                   AND (:role IS NULL OR :role = '' OR r.roleName = :role)
                   AND (:isDeleted IS NULL OR u.isDeleted = :isDeleted)
+                  AND (:companyId IS NULL OR u.company.companyId = :companyId)
             """)
-    Page<User> findUsersByFilter(@Param("keyword") String keyword, @Param("role") String role, @Param("isDeleted") Boolean isDeleted, Pageable pageable);
+    Page<User> findUsersByFilter(@Param("keyword") String keyword,
+                                 @Param("role") String role,
+                                 @Param("isDeleted") Boolean isDeleted,
+                                 @Param("companyId") Long companyId,
+                                 Pageable pageable);
+
 
 }

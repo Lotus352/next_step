@@ -7,6 +7,7 @@ import org.example.next_step.dtos.requests.UserFilterRequest;
 import org.example.next_step.dtos.requests.UserRequest;
 import org.example.next_step.dtos.responses.JobResponse;
 import org.example.next_step.dtos.responses.UserResponse;
+import org.example.next_step.models.enums.Status;
 import org.example.next_step.security.JwtTokenProvider;
 import org.example.next_step.services.UserService;
 import org.springframework.data.domain.PageRequest;
@@ -34,15 +35,21 @@ public class UserController {
     public ResponseEntity<Page<UserResponse>> filterUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestBody UserFilterRequest filter
+            @RequestBody UserFilterRequest filter,
+            HttpServletRequest request
     ) {
+        String username = getUsernameRequest(request);
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Sort.Direction direction = Sort.Direction.fromString(
                 StringUtils.hasText(filter.getSortDirection()) ? filter.getSortDirection() : "DESC"
         );
         String sortBy = StringUtils.hasText(filter.getSortBy()) ? filter.getSortBy() : "createdAt";
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Page<UserResponse> users = userService.filter(filter, pageable);
+        Page<UserResponse> users = userService.filter(filter, pageable, username);
         return ResponseEntity.ok(users);
     }
 
@@ -123,6 +130,10 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<UserResponse> changeStatus(@PathVariable Long id, @RequestParam Status status) {
+        return ResponseEntity.ok(userService.changeStatus(id, status));
+    }
 
     /* ---------- commands ---------- */
 

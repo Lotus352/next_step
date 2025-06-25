@@ -20,9 +20,9 @@ public class CertificationController {
     @GetMapping
     public ResponseEntity<Page<CertificationResponse>> list(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        return ResponseEntity.ok(service.getAll(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String key) {
+        return ResponseEntity.ok(service.getAll(page, size, key.trim().toLowerCase()));
     }
 
     @GetMapping("/{id}")

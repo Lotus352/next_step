@@ -38,6 +38,13 @@ public class JobMapper {
                 .benefits(job.getBenefits())
                 .isFavorite(username != null ? job.isFavorite(username) : false)
                 .appliedCount(job.getAppliedCount())
+                .certifications(
+                        job.getJobCertifications() != null
+                                ? job.getJobCertifications().stream()
+                                .map(JobCertificationMapper::toDTO)
+                                .collect(Collectors.toSet())
+                                : null
+                )
                 .build();
     }
 
@@ -105,6 +112,14 @@ public class JobMapper {
             job.setBenefits(request.getBenefits());
         }
 
+        if (request.getCertifications() != null && !request.getCertifications().isEmpty()) {
+            Set<JobCertification> jobCertifications = request.getCertifications().stream()
+                    .map(certReq -> JobCertificationMapper.toEntity(certReq, job))
+                    .collect(Collectors.toSet());
+
+            job.setJobCertifications(jobCertifications);
+        }
+
         return job;
     }
 
@@ -129,7 +144,10 @@ public class JobMapper {
     }
 
 
-    public static void updateEntity(Job job, JobRequest request, CompanyRepository companyRepo, JobSalaryRepository jobSalaryRepo, SkillRepository skillRepo, ExperienceLevelRepository experienceLevelRepo) {
+    public static void updateEntity(Job job, JobRequest request, CompanyRepository companyRepo,
+                                    JobSalaryRepository jobSalaryRepo,
+                                    SkillRepository skillRepo,
+                                    ExperienceLevelRepository experienceLevelRepo) {
         if (request == null) return;
 
         if (request.getTitle() != null) job.setTitle(request.getTitle());
@@ -166,6 +184,14 @@ public class JobMapper {
 
         if (request.getBenefits() != null) {
             job.setBenefits(request.getBenefits());
+        }
+
+        if (request.getCertifications() != null && !request.getCertifications().isEmpty()) {
+            Set<JobCertification> jobCertifications = request.getCertifications().stream()
+                    .map(certReq -> JobCertificationMapper.toEntity(certReq, job))
+                    .collect(Collectors.toSet());
+
+            job.setJobCertifications(jobCertifications);
         }
 
         job.setUpdatedAt(LocalDateTime.now());

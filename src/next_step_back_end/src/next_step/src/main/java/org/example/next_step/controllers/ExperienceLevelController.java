@@ -22,8 +22,8 @@ public class ExperienceLevelController {
     @GetMapping
     public ResponseEntity<Page<ExperienceLevelResponse>> findAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String key) {
         return ResponseEntity.ok(service.findAll(page, size));
     }
 

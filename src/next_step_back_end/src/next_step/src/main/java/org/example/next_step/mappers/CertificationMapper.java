@@ -15,7 +15,7 @@ public class CertificationMapper {
 
         return CertificationResponse.builder()
                 .certificationId(certification.getCertificationId())
-                .certificationsName(certification.getCertificationName())
+                .certificationName(certification.getCertificationName())
                 .build();
     }
 
@@ -24,7 +24,7 @@ public class CertificationMapper {
         if (request == null) return null;
 
         Certification certification = new Certification();
-        certification.setCertificationName(request.getCertificationsName());
+        certification.setCertificationName(request.getCertificationName());
         return certification;
     }
 
@@ -32,8 +32,8 @@ public class CertificationMapper {
     public static void updateEntity(Certification certification, CertificationRequest request) {
         if (request == null || certification == null) return;
 
-        if (request.getCertificationsName() != null) {
-            certification.setCertificationName(request.getCertificationsName());
+        if (request.getCertificationName() != null) {
+            certification.setCertificationName(request.getCertificationName());
         }
     }
 }

@@ -22,6 +22,7 @@ public class JobRequest {
     private Boolean isDeleted;
     private Boolean isFeatured;
     private String status;
+    private Set<JobCertificationRequest> certifications;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;

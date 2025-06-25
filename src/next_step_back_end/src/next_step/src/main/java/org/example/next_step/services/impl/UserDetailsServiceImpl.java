@@ -24,7 +24,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new DisabledException("User account is deleted");
         }
 
-        if (user.getStatus() == Status.ACTIVE) {
+        if (user.getStatus() == Status.INACTIVE) {
+            throw new DisabledException("User account is inactive");
+        }
+
+        if (user.getStatus() == Status.BANNED) {
             throw new DisabledException("User account is banned");
         }
 

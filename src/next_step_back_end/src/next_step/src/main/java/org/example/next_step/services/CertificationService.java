@@ -8,6 +8,7 @@ import org.example.next_step.models.Certification;
 import org.example.next_step.repositories.CertificationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +19,19 @@ public class CertificationService {
     private final CertificationRepository repository;
 
     @Transactional(readOnly = true)
-    public Page<CertificationResponse> getAll(int page, int size) {
-        return repository
-                .findAll(PageRequest.of(page, size))
-                .map(CertificationMapper::toDTO);
+    public Page<CertificationResponse> getAll(int page, int size, String key) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Certification> certs;
+
+        if (key == null || key.isBlank()) {
+            certs = repository.findAll(pageable);
+        } else {
+            certs = repository.searchByKey(key, pageable);
+        }
+
+        return certs.map(CertificationMapper::toDTO);
     }
+
 
     @Transactional(readOnly = true)
     public CertificationResponse getById(Long id) {
@@ -35,7 +44,7 @@ public class CertificationService {
 
     @Transactional
     public CertificationResponse create(CertificationRequest request) {
-        if (repository.existsByCertificationNameIgnoreCase(request.getCertificationsName())) {
+        if (repository.existsByCertificationNameIgnoreCase(request.getCertificationName())) {
             throw new IllegalArgumentException("Certification name already exists");
         }
 
