@@ -3,6 +3,7 @@ import SalaryType from "@/types/salary-type.ts";
 import LocationType from "@/types/location-type.ts";
 import PostedBy from "@/types/post-py-type.ts";
 import ExperienceLevelType from "@/types/experience-level-type.ts";
+import JobCertificationType, {JobCertificationRequest} from "@/types/job-certification-type.ts";
 
 export default interface JobType {  
   jobId: number;
@@ -27,6 +28,7 @@ export default interface JobType {
   salary: SalaryType;
   isFavorite: boolean;
   appliedCount: number;
+  certifications: JobCertificationType[];
 }
 
 export interface JobRequest {
@@ -50,5 +52,6 @@ export interface JobRequest {
   applicationIds: number[];
   salary: SalaryType;
   interviewProcess: number;
+  certifications: JobCertificationRequest[];
 }
 

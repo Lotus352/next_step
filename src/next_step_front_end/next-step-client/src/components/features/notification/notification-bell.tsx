@@ -62,7 +62,7 @@ export default function NotificationBell() {
 
         const interval = setInterval(() => {
             dispatch(fetchUnreadCount())
-        }, 30000) // Refresh every 30 seconds
+        }, 100000) // Refresh every 30 seconds
 
         return () => clearInterval(interval)
     }, [isAuthenticated, dispatch])

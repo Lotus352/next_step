@@ -9,9 +9,10 @@ import jobApplicationsReducer from "./slices/job-applications-slice.ts";
 import notificationsReducer from "./slices/notifications-slice.ts";
 import skillsReducer from "./slices/skills-slice.ts";
 import experienceLevelsReducer from "./slices/experience-levels-slice.ts";
-import salaryReducer from "@/store/slices/salary-slice.ts";
-import userReducer from "@/store/slices/user-slice.ts";
+import salaryReducer from "@/store/slices/salaries-slice.ts";
+import userReducer from "@/store/slices/users-slice.ts";
 import favoriteJobReducer from "@/store/slices/favorite-jobs-slice.ts";
+import certificationReducer from "@/store/slices/certifications-slice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
     experienceLevels: experienceLevelsReducer,
     salaries: salaryReducer,
     user: userReducer,
-    favoriteJobs: favoriteJobReducer
+    favoriteJobs: favoriteJobReducer,
+    certifications: certificationReducer,
   },
 });
 

@@ -1,9 +1,9 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from "lucide-react"
-import { motion } from "framer-motion"
+import {Button} from "@/components/ui/button"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal} from "lucide-react"
+import {motion} from "framer-motion"
 
 interface PaginationProps {
     currentPage: number
@@ -17,17 +17,18 @@ interface PaginationProps {
     className?: string
 }
 
-export function Pagination({
-                               currentPage,
-                               totalPages,
-                               totalElements,
-                               pageSize,
-                               onPageChange,
-                               onPageSizeChange,
-                               showPageSizeSelector = true,
-                               pageSizeOptions = [5, 10, 20, 50],
-                               className = "",
-                           }: PaginationProps) {
+export function Pagination(
+    {
+        currentPage,
+        totalPages,
+        totalElements,
+        pageSize,
+        onPageChange,
+        onPageSizeChange,
+        showPageSizeSelector = true,
+        pageSizeOptions = [5, 10, 20, 50],
+        className = "",
+    }: PaginationProps) {
     // Calculate visible page numbers
     const getVisiblePages = () => {
         const delta = 2 // Number of pages to show on each side of current page
@@ -73,9 +74,9 @@ export function Pagination({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.3}}
             className={`flex flex-col sm:flex-row items-center justify-between gap-4 ${className}`}
         >
             {/* Page Info */}
@@ -88,9 +89,10 @@ export function Pagination({
                 {showPageSizeSelector && onPageSizeChange && (
                     <div className="flex items-center gap-2">
                         <span>Show:</span>
-                        <Select value={pageSize.toString()} onValueChange={(value) => onPageSizeChange(Number.parseInt(value))}>
+                        <Select value={pageSize.toString()}
+                                onValueChange={(value) => onPageSizeChange(Number.parseInt(value))}>
                             <SelectTrigger className="w-20 h-8">
-                                <SelectValue />
+                                <SelectValue/>
                             </SelectTrigger>
                             <SelectContent>
                                 {pageSizeOptions.map((size) => (
@@ -114,7 +116,7 @@ export function Pagination({
                     disabled={currentPage === 0}
                     className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                 >
-                    <ChevronsLeft className="h-4 w-4" />
+                    <ChevronsLeft className="h-4 w-4"/>
                 </Button>
 
                 {/* Previous Page */}
@@ -125,7 +127,7 @@ export function Pagination({
                     disabled={currentPage === 0}
                     className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                 >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4"/>
                 </Button>
 
                 {/* Page Numbers */}
@@ -134,7 +136,7 @@ export function Pagination({
                         if (page === "...") {
                             return (
                                 <div key={`dots-${index}`} className="flex items-center justify-center h-8 w-8">
-                                    <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                                    <MoreHorizontal className="h-4 w-4 text-muted-foreground"/>
                                 </div>
                             )
                         }
@@ -166,7 +168,7 @@ export function Pagination({
                     disabled={currentPage >= totalPages - 1}
                     className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                 >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4"/>
                 </Button>
 
                 {/* Last Page */}
@@ -177,7 +179,7 @@ export function Pagination({
                     disabled={currentPage >= totalPages - 1}
                     className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                 >
-                    <ChevronsRight className="h-4 w-4" />
+                    <ChevronsRight className="h-4 w-4"/>
                 </Button>
             </div>
         </motion.div>

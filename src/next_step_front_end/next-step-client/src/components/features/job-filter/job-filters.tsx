@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store.ts"
-import { fetchSalaryRange } from "@/store/slices/salary-slice.ts"
+import { fetchSalaryRange } from "@/store/slices/salaries-slice.ts"
 import { resetJobFilter } from "@/store/slices/jobs-slice.ts"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet.tsx"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs.tsx"

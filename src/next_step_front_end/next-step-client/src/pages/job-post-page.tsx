@@ -23,7 +23,7 @@ import {fetchCountries} from "@/store/slices/locations-slice"
 import {fetchSkills} from "@/store/slices/skills-slice"
 import {fetchLevels} from "@/store/slices/experience-levels-slice"
 import {fetchEmploymentTypes, addJob, clearJobSelected, initializeJobRequest, clearJobRequest} from "@/store/slices/jobs-slice"
-import {fetchCurrencies, fetchPayPeriods} from "@/store/slices/salary-slice"
+import {fetchCurrencies, fetchPayPeriods} from "@/store/slices/salaries-slice.ts"
 
 // Types and constants
 import {DEFAULT_LEVEL_SIZE, DEFAULT_SKILL_SIZE, DEFAULT_PAGE} from "@/constants"

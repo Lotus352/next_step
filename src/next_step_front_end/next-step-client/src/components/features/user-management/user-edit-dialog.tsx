@@ -18,7 +18,7 @@ import { toast } from "sonner"
 import type UserType from "@/types/user-type"
 import type { UserRequest } from "@/types/user-type"
 import type { AppDispatch } from "@/store/store"
-import { updateUserProfile } from "@/store/slices/user-slice"
+import { updateUserProfile } from "@/store/slices/users-slice.ts"
 import {
     CustomDialog,
     CustomDialogContent,

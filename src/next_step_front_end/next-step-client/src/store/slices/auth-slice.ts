@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosClient from "@/api/axios-client";
 import { jwtDecode } from "jwt-decode";
 import type UserType from "@/types/user-type";
-import {clearProfile} from "@/store/slices/user-slice.ts";
+import {clearProfile} from "@/store/slices/users-slice.ts";
 
 /* ---------- Types ---------- */
 interface JwtPayload {

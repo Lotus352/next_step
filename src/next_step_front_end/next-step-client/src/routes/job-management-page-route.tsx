@@ -1,8 +1,8 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { JobManagementPage } from "@/pages/job-management-page";
+import type { RootState } from "@/store/store.ts";
+import { JobManagementPage } from "@/pages/job-management-page.tsx";
 import Header from "@/components/layout/header.tsx";
 import Footer from "@/components/layout/footer.tsx";
 

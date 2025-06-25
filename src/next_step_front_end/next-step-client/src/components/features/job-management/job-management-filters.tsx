@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Filter, Briefcase, MapPin, Calendar, TrendingUp, X, RotateCcw, ArrowUpDown } from "lucide-react"
+import { Filter, Briefcase, Calendar, TrendingUp, X, RotateCcw, ArrowUpDown } from "lucide-react"
 import type JobFilterType from "@/types/job-filter-type"
 import type { AppDispatch, RootState } from "@/store/store"
 import { fetchCountries, fetchCities, clearCities } from "@/store/slices/locations-slice"
@@ -32,15 +32,12 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
     if (countries.length === 0) {
       dispatch(fetchCountries())
     }
-    // Bỏ phần load cities tự động
   }, [dispatch, countries.length])
 
-  // Cập nhật useEffect để load cities khi country được chọn
   useEffect(() => {
     if (localFilter.country && localFilter.country !== "all") {
       dispatch(fetchCities({ country: localFilter.country }))
     } else {
-      // Clear cities khi không có country được chọn
       dispatch(clearCities())
     }
   }, [dispatch, localFilter.country])
@@ -137,7 +134,6 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
               {/* Employment Type Filter */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-primary" />
                   <label className="text-sm font-semibold text-foreground">Employment Type</label>
                 </div>
                 <Select
@@ -164,7 +160,6 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
               {/* Country Filter */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary" />
                   <label className="text-sm font-semibold text-foreground">Country</label>
                 </div>
                 <Select
@@ -191,7 +186,6 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
               {/* City Filter */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary" />
                   <label className="text-sm font-semibold text-foreground">City</label>
                 </div>
                 <Select
@@ -224,7 +218,6 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
               {/* Date Posted Filter */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
                   <label className="text-sm font-semibold text-foreground">Date Posted</label>
                 </div>
                 <Select
@@ -246,7 +239,6 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
               {/* Sort By Filter */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
                   <label className="text-sm font-semibold text-foreground">Sort By</label>
                 </div>
                 <Select
@@ -258,11 +250,9 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => {
-                      const Icon = option.icon
                       return (
                           <SelectItem key={option.value} value={option.value}>
                             <div className="flex items-center gap-2">
-                              <Icon className="h-4 w-4" />
                               {option.label}
                             </div>
                           </SelectItem>
@@ -274,7 +264,9 @@ export function JobManagementFilters({ filter, onFilterChange }: JobManagementFi
 
               {/* Sort Direction Toggle & Reset */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground opacity-0">Actions</label>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-semibold text-foreground">Sort Direction</label>
+                </div>
                 <div className="flex gap-2">
                   <Button
                       variant="outline"

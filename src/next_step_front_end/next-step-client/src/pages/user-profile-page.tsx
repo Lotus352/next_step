@@ -11,7 +11,7 @@ import ProfileTabs from "@/components/features/user/profile-tabs"
 import Loading from "@/components/loading"
 import ErrorPage from "@/pages/error-page"
 import { DEFAULT_PAGE, DEFAULT_SKILL_SIZE, DEFAULT_LEVEL_SIZE } from "@/constants"
-import { fetchUserProfile } from "@/store/slices/user-slice.ts"
+import { fetchUserProfile } from "@/store/slices/users-slice.ts"
 import ProfileHeader from "@/components/features/user/profile-header.tsx"
 import Header from "@/components/layout/header.tsx"
 import Footer from "@/components/layout/footer.tsx"
@@ -24,14 +24,16 @@ export default function UserProfilePage() {
 
   // Check if the current user is viewing their own profile
   const isOwner = user?.username === username
+  const isCandidate =
+      user?.roles?.some((role) => role.roleName === "CANDIDATE") || false;
 
   useEffect(() => {
-    if (username) {
+    if (username && isCandidate) {
       dispatch(fetchUserProfile(username))
       dispatch(fetchSkills({ page: DEFAULT_PAGE, size: DEFAULT_SKILL_SIZE }))
       dispatch(fetchLevels({ page: DEFAULT_PAGE, size: DEFAULT_LEVEL_SIZE }))
     }
-  }, [dispatch, username])
+  }, [dispatch, username, isCandidate])
 
   if (statuses.fetching === "loading") {
     return <Loading />

@@ -74,7 +74,7 @@ export const fetchSalaryRange = createAsyncThunk<
 });
 
 /* ---------- Slice ---------- */
-const salarySlice = createSlice({
+const salariesSlice = createSlice({
   name: "salary",
   initialState,
   reducers: {
@@ -103,5 +103,5 @@ const salarySlice = createSlice({
   },
 });
 
-export const { clear } = salarySlice.actions;
-export default salarySlice.reducer;
+export const { clear } = salariesSlice.actions;
+export default salariesSlice.reducer;

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { AppDispatch, RootState } from "@/store/store"
-import { setUserFilter, filterUsers } from "@/store/slices/user-slice"
+import { setUserFilter, filterUsers } from "@/store/slices/users-slice.ts"
 import { DEFAULT_USER_SIZE, DEFAULT_PAGE } from "@/constants"
 import { motion } from "framer-motion"
 

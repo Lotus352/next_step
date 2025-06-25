@@ -24,6 +24,7 @@ function ReviewStar({
   className,
   interactive = true,
 }: ReviewStarProps) {
+
   const { fullStars, hasHalfStar } = calStarReview(averageRating)
   const [hoverRating, setHoverRating] = useState(0)
 

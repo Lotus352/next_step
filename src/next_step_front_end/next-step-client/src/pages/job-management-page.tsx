@@ -18,7 +18,6 @@ import {
     Briefcase,
     Users,
     Star,
-    TrendingUp,
     Clock,
     CheckCircle,
     XCircle,
@@ -90,8 +89,6 @@ export function JobManagementPage({ userRole }: JobManagementPageProps) {
         closedJobs: jobs.filter((job) => job.status === "CLOSE").length,
         featuredJobs: jobs.filter((job) => job.isFeatured).length,
         totalApplications: jobs.reduce((sum, job) => sum + job.appliedCount, 0),
-        averageApplications:
-            jobs.length > 0 ? Math.round(jobs.reduce((sum, job) => sum + job.appliedCount, 0) / jobs.length) : 0,
         recentJobs: jobs.filter((job) => {
             const jobDate = new Date(job.createdAt)
             const weekAgo = new Date()
@@ -265,21 +262,6 @@ export function JobManagementPage({ userRole }: JobManagementPageProps) {
                                     <div>
                                         <div className="text-sm text-muted-foreground">Applications</div>
                                         <div className="text-xl font-bold text-foreground">{stats.totalApplications}</div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Average Applications */}
-                        <Card className="border-border/30 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
-                            <CardContent className="p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-indigo-100 rounded-lg">
-                                        <TrendingUp className="h-5 w-5 text-indigo-600" />
-                                    </div>
-                                    <div>
-                                        <div className="text-sm text-muted-foreground">Avg/Job</div>
-                                        <div className="text-xl font-bold text-foreground">{stats.averageApplications}</div>
                                     </div>
                                 </div>
                             </CardContent>

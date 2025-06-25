@@ -30,7 +30,7 @@ import {
   uploadAvatar,
   uploadResume,
   fetchUserProfile,
-} from "@/store/slices/user-slice";
+} from "@/store/slices/users-slice.ts";
 import type { AppDispatch, RootState } from "@/store/store";
 import {
   StatusNotification,

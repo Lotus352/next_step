@@ -68,6 +68,6 @@ export const DEFAULT_USER_FILTER: UserFilterType = {
   keyword: "",
   role: "",
   isDeleted: false,
-  sortBy: "createdAt",
+  sortBy: "username",
   sortDirection: "DESC",
 };

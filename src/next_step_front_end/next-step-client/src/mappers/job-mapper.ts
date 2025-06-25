@@ -24,5 +24,6 @@ export const mapJobTypeToJobRequest = (job: JobType): JobRequest => {
     applicationIds: [], 
     salary: job.salary,
     interviewProcess: job.interviewProcess ?? 0,
+    certifications: job.certifications ?? [],
   };
 }; 
